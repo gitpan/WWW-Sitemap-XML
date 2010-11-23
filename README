@@ -1,0 +1,183 @@
+NAME
+    WWW::Sitemap::XML - XML Sitemap protocol
+
+VERSION
+    version 1.103270
+
+SYNOPSIS
+        use WWW::Sitemap::XML;
+
+        my $map = WWW::Sitemap::XML->new();
+
+        # add new url
+        $map->add( 'http://mywebsite.com/' );
+
+        # or
+        $map->add(
+            loc => 'http://mywebsite.com/',
+            lastmod => '2010-11-22',
+            changefreq => 'monthly',
+            priority => 1.0,
+        );
+
+        # or
+        $map->add(
+            WWW::Sitemap::XML::URL->new(
+                loc => 'http://mywebsite.com/',
+                lastmod => '2010-11-22',
+                changefreq => 'monthly',
+                priority => 1.0,
+            )
+        );
+
+        # read URLs from existing sitemap.xml file
+        my @urls = $map->read( 'sitemap.xml' );
+
+        # load urls from existing sitemap.xml file
+        $map->load( 'sitemap.xml' );
+
+        # get xml object
+        my $xml = $map->as_xml;
+        $xml->set_pretty_print('indented');
+
+        print $xml->sprint;
+
+        # write to file
+        $map->write( 'sitemap.xml', pretty_print => 'indented' );
+
+        # write compressed
+        $map->write( 'sitemap.xml.gz' );
+
+        # or
+        my $cfh = IO::Zlib->new();
+        $cfh->open("sitemap.xml.gz", "wb9");
+
+        $map->write( $cfh );
+
+        $cfh->close;
+
+DESCRIPTION
+    Read and write sitemap xml files as defined at
+    <http://www.sitemaps.org/>.
+
+METHODS
+  add($url|%attrs)
+        $map->add(
+            WWW::Sitemap::XML::URL->new(
+                loc => 'http://mywebsite.com/',
+                lastmod => '2010-11-22',
+                changefreq => 'monthly',
+                priority => 1.0,
+            )
+        );
+
+    Add the $url object representing single page in the sitemap.
+
+    Accepts blessed objects implementing WWW::Sitemap::XML::URL::Interface.
+
+    Otherwise the arguments %attrs are passed as-is to create new
+    WWW::Sitemap::XML::URL object.
+
+        $map->add(
+            loc => 'http://mywebsite.com/',
+            lastmod => '2010-11-22',
+            changefreq => 'monthly',
+            priority => 1.0,
+        );
+
+        # single url argument
+        $map->add( 'http://mywebsite.com/' );
+
+        # is same as
+        $map->add( loc => 'http://mywebsite.com/' );
+
+    Performs basic validation of urls added:
+
+    *   maximum of 50 000 urls in single sitemap
+
+    *   URL no longer then 2048 characters
+
+    *   all URLs should use the same protocol and reside on same host
+
+  load($sitemap)
+        $map->load( $sitemap );
+
+    It is a shortcut for:
+
+        $map->add($_) for $map->read($sitemap);
+
+    Please see "read" for details.
+
+  read($sitemap)
+        my @urls = $map->read( $sitemap );
+
+    Read the content of $sitemap and return the list of
+    WWW::Sitemap::XML::URL objects representing single "<url>" element.
+
+    $sitemap could be either a string containing the whole XML sitemap, a
+    filename of a sitemap file or an open IO::Handle.
+
+  write($file, %options)
+        # write to file
+        $map->write( 'sitemap.xml', pretty_print => 'indented');
+
+        # or
+        my $fh = IO::File->new();
+        $fh->open("sitemap.xml", ">:utf8");
+        $map->write( $fh, pretty_print => 'indented');
+        $cfh->close;
+
+        # write compressed
+        $map->write( 'sitemap.xml.gz' );
+
+        # or
+        my $cfh = IO::Zlib->new();
+        $cfh->open("sitemap.xml.gz", "wb9");
+        $map->write( $cfh );
+        $cfh->close;
+
+    Write XML sitemap to $file - a file name or IO::Handle object.
+
+    If file names ends in ".gz" then the output file will be compressed
+    using IO::Zlib.
+
+    Optional %options are passed to "flush" or "print_to_file" methods
+    (depending on the type of $file, respectively for file handle and file
+    name) as decribed in XML::Twig.
+
+  as_xml
+        my $xml = $map->as_xml;
+
+        $xml->set_pretty_print('indented');
+
+        open SITEMAP, ">sitemap.xml";
+        print SITEMAP $xml->sprint;
+        close SITEMAP;
+
+        # write compressed
+        $xml->set_pretty_print('none');
+
+        my $cfh = IO::Zlib->new();
+        $cfh->open("sitemap.xml.gz", "wb9");
+
+        print $cfh $xml->sprint;
+
+        $cfh->close;
+
+    Returns XML::Twig object representing the sitemap in XML format.
+
+SEE ALSO
+    *   <http://www.sitemaps.org/>
+
+    *   Search::Sitemap
+
+AUTHOR
+    Alex J. G. Burzyński <ajgb@cpan.org>
+
+COPYRIGHT AND LICENSE
+    This software is copyright (c) 2010 by Alex J. G. Burzyński
+    <ajgb@cpan.org>.
+
+    This is free software; you can redistribute it and/or modify it under
+    the same terms as the Perl 5 programming language system itself.
+
