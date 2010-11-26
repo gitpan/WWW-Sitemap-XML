@@ -1,16 +1,16 @@
 use strict;
 use warnings;
-package WWW::Sitemap::XML::URL;
+package WWW::SitemapIndex::XML::Sitemap;
 BEGIN {
-  $WWW::Sitemap::XML::URL::AUTHORITY = 'cpan:AJGB';
+  $WWW::SitemapIndex::XML::Sitemap::AUTHORITY = 'cpan:AJGB';
 }
 BEGIN {
-  $WWW::Sitemap::XML::URL::VERSION = '1.103300';
+  $WWW::SitemapIndex::XML::Sitemap::VERSION = '1.103300';
 }
-#ABSTRACT: XML Sitemap url entry
+#ABSTRACT: XML Sitemap index sitemap entry
 
 use Moose;
-use WWW::Sitemap::XML::Types qw( Location ChangeFreq Priority );
+use WWW::Sitemap::XML::Types qw( Location );
 use MooseX::Types::DateTime::W3C qw( DateTimeW3C );
 use XML::LibXML;
 
@@ -34,26 +34,10 @@ has 'lastmod' => (
 );
 
 
-has 'changefreq' => (
-    is => 'rw',
-    isa => ChangeFreq,
-    required => 0,
-    predicate => 'has_changefreq',
-);
-
-
-has 'priority' => (
-    is => 'rw',
-    isa => Priority,
-    required => 0,
-    predicate => 'has_priority',
-);
-
-
 sub as_xml {
     my $self = shift;
 
-    my $url = XML::LibXML::Element->new('url');
+    my $sitemap = XML::LibXML::Element->new('sitemap');
 
     do {
         my $name = $_;
@@ -61,14 +45,14 @@ sub as_xml {
 
         $e->appendText( $self->$name );
 
-        $url->appendChild( $e );
+        $sitemap->appendChild( $e );
 
     } for 'loc',grep {
             eval('$self->has_'.$_) || defined $self->$_()
-        } qw( lastmod changefreq priority );
+        } qw( lastmod );
 
 
-    return $url;
+    return $sitemap;
 }
 
 around BUILDARGS => sub {
@@ -81,7 +65,7 @@ around BUILDARGS => sub {
     return $class->$next( @_ );
 };
 
-with 'WWW::Sitemap::XML::URL::Interface';
+with 'WWW::SitemapIndex::XML::Sitemap::Interface';
 
 
 __PACKAGE__->meta->make_immutable;
@@ -96,7 +80,7 @@ __END__
 
 =head1 NAME
 
-WWW::Sitemap::XML::URL - XML Sitemap url entry
+WWW::SitemapIndex::XML::Sitemap - XML Sitemap index sitemap entry
 
 =head1 VERSION
 
@@ -104,38 +88,35 @@ version 1.103300
 
 =head1 SYNOPSIS
 
-    my $url = WWW::Sitemap::XML::URL->new(
-        loc => 'http://mywebsite.com/',
+    my $sitemap = WWW::SitemapIndex::XML::Sitemap->new(
+        loc => 'http://mywebsite.com/sitemap1.xml.gz',
         lastmod => '2010-11-26',
-        changefreq => 'always',
-        priority => 1.0,
     );
 
 XML sample:
 
     <?xml version="1.0" encoding="UTF-8"?>
-    <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-       <url>
-          <loc>http://mywebsite.com/</loc>
+    <sitemapindex xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+       <sitemap>
+          <loc>http://mywebsite.com/sitemap1.xml.gz</loc>
           <lastmod>2010-11-26</lastmod>
-          <changefreq>always</changefreq>
-          <priority>1.0</priority>
-       </url>
-    </urlset>
+       </sitemap>
+    </sitemapindex>
 
 =head1 DESCRIPTION
 
-WWW::Sitemap::XML::URL represents single url entry in sitemap file.
+WWW::SitemapIndex::XML::Sitemap represents single sitemap entry in sitemap
+index file.
 
-Class implements L<WWW::Sitemap::XML::URL::Interface>.
+Class implements L<WWW::SitemapIndex::XML::Sitemap::Interface>.
 
 =head1 ATTRIBUTES
 
 =head2 loc
 
-    $url->loc('http://mywebsite.com/')
+    $url->loc('http://mywebsite.com/sitemap1.xml.gz')
 
-URL of the page.
+URL of the sitemap.
 
 isa: L<WWW::Sitemap::XML::Types/"Location">
 
@@ -143,25 +124,9 @@ Required.
 
 =head2 lastmod
 
-The date of last modification of the page.
+The date of last modification of the sitemap.
 
 isa: L<MooseX::Types::DateTime::W3C/"DateTimeW3C">
-
-Optional.
-
-=head2 changefreq
-
-How frequently the page is likely to change.
-
-isa: L<WWW::Sitemap::XML::Types/"ChangeFreq">
-
-Optional.
-
-=head2 priority
-
-The priority of this URL relative to other URLs on your site.
-
-isa: L<WWW::Sitemap::XML::Types/"Priority">
 
 Optional.
 
@@ -169,7 +134,8 @@ Optional.
 
 =head2 as_xml
 
-Returns L<XML::LibXML::Element> object representing the C<E<lt>urlE<gt>> entry in the sitemap.
+Returns L<XML::LibXML::Element> object representing the C<E<lt>sitemapE<gt>>
+entry in the sitemap.
 
 =head1 SEE ALSO
 

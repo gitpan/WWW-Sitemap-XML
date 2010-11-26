@@ -5,145 +5,53 @@ BEGIN {
   $WWW::Sitemap::XML::AUTHORITY = 'cpan:AJGB';
 }
 BEGIN {
-  $WWW::Sitemap::XML::VERSION = '1.103270';
+  $WWW::Sitemap::XML::VERSION = '1.103300';
 }
 #ABSTRACT: XML Sitemap protocol
 
 use Moose;
 
 use WWW::Sitemap::XML::URL;
-use XML::Twig;
+use XML::LibXML 1.70;
 use Scalar::Util qw( blessed );
-use IO::Zlib;
 
 use WWW::Sitemap::XML::Types qw( SitemapURL );
 
 
-has '_urlset' => (
+has '_rootcontainer' => (
     is => 'ro',
     traits => [qw( Array )],
     isa => 'ArrayRef',
     default => sub { [] },
     handles => {
-        _add_url => 'push',
-        _count_urls => 'count',
-        urls => 'elements',
+        _add_entry => 'push',
+        _count_entries => 'count',
+        _entries => 'elements',
     }
 );
 
-has '_first_url' => (
+has '_first_loc' => (
     is => 'rw',
-    isa => 'Str',
 );
 
-sub _pre_check_add {
-    my ($self, $url) = @_;
-
-    die 'object does not implement WWW::Sitemap::XML::URL::Interface'
-        unless is_SitemapURL($url);
-
-    die "Sitemap cannot contain more then 50 000 URLs"
-        if $self->_count_urls >= 50_000;
-
-    my $loc = $url->loc;
-
-    die "URL cannot be longer then 2048 characters"
-        if length $loc >= 2048;
-
-    my($scheme, $authority) = $loc =~ m|(?:([^:/?#]+):)?(?://([^/?#]*))?|;
-    my $new = "$scheme://$authority";
-    if ( $self->_count_urls ) {
-        my $first = $self->_first_url;
-
-        die "URLs in sitemap should use the same protocol and reside on the "
-            ."same host: $first, not $new" unless $first eq $new;
-    } else {
-        $self->_first_url( $new );
-    }
-}
-
-
-sub add {
-    my $self = shift;
-
-    my $arg = @_ == 1 && blessed $_[0] ?
-                shift @_ : WWW::Sitemap::XML::URL->new(@_);
-
-    $self->_pre_check_add($arg);
-
-    $self->_add_url( $arg );
-}
-
-
-sub load {
-    my ($self, $sitemap) = @_;
-
-    $self->add($_) for $self->read($sitemap);
-}
-
-
-sub read {
-    my ($self, $sitemap) = @_;
-
-    my @urls;
-
-    my $xt = XML::Twig->new(
-        twig_roots => {
-            'urlset/url' => sub {
-                my ($t, $url) = @_;
-
-                push @urls,
-                    WWW::Sitemap::XML::URL->new(
-                        map { $_->name => $_->field } $url->children
-                    );
-
-                $t->purge;
-            }
-        }
-    );
-
-    $xt->parse($sitemap);
-
-    return @urls;
-}
-
-
-sub write {
-    my ($self, $fh, %options) = @_;
-
-    my $writer = 'flush';
-    my $_fh_was_opened;
-
-    unless ( ref $fh ) {
-        if ( $fh =~ /\.gz$/i ) {
-            my $fname = $fh;
-
-            $fh = IO::Zlib->new($fname, "wb9")
-                or die "Cannot open $fname for writing: $!";
-
-            $_fh_was_opened = 1;
-        } else {
-            $writer = 'print_to_file';
+has '_check_req_interface' => (
+    is => 'ro',
+    default => sub {
+        sub {
+            die 'object does not implement WWW::Sitemap::XML::URL::Interface'
+                unless is_SitemapURL($_[0]);
         }
     }
-    my $xml = $self->as_xml;
+);
 
-    $xml->$writer( $fh, %options );
+has '_entry_class' => (
+    is => 'ro',
+    default => 'WWW::Sitemap::XML::URL'
+);
 
-    $fh->close if $_fh_was_opened;
-}
-
-
-sub as_xml {
-    my $self = shift;
-
-    my $xt = XML::Twig->new(
-        no_prolog => 0,
-    );;
-
-    $xt->set_xml_version("1.0");
-    $xt->set_encoding("UTF-8");
-    my $root = XML::Twig::Elt->new('urlset',
+has '_root_ns' => (
+    is => 'ro',
+    default => sub {
         {
             'xmlns' => "http://www.sitemaps.org/schemas/sitemap/0.9",
             'xmlns:xsi' => "http://www.w3.org/2001/XMLSchema-instance",
@@ -151,15 +59,122 @@ sub as_xml {
                 'http://www.sitemaps.org/schemas/sitemap/0.9',
                 'http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd'
             ),
-        },
+        }
+    },
+);
+
+has '_root_elem' => (
+    is => 'ro',
+    default => 'urlset',
+);
+
+sub _pre_check_add {
+    my ($self, $entry) = @_;
+
+    $self->_check_req_interface->($entry);
+
+    die "Single file cannot contain more then 50 000 entries"
+        if $self->_count_entries >= 50_000;
+
+    my $loc = $entry->loc;
+
+    die "URL cannot be longer then 2048 characters"
+        unless length $loc < 2048;
+
+    my($scheme, $authority) = $loc =~ m|(?:([^:/?#]+):)?(?://([^/?#]*))?|;
+    my $new = "$scheme://$authority";
+    if ( $self->_count_entries ) {
+        my $first = $self->_first_loc;
+
+        die "All URLs in same file should use the same protocol and reside on the "
+            ."same host: $first, not $new" unless $first eq $new;
+    } else {
+        $self->_first_loc( $new );
+    }
+}
+
+
+sub add {
+    my $self = shift;
+
+    my $class = $self->_entry_class;
+
+    my $arg = @_ == 1 && blessed $_[0] ?
+                shift @_ : $class->new(@_);
+
+    $self->_pre_check_add($arg);
+
+    $self->_add_entry( $arg );
+}
+
+
+sub urls { shift->_entries }
+
+
+sub load {
+    my $self = shift;
+
+    $self->add($_) for $self->read(@_);
+}
+
+
+sub read {
+    my ($self, %args) = @_;
+
+    my @entries;
+    my $class = $self->_entry_class;
+
+    my $xml = XML::LibXML->load_xml( %args );
+
+    for my $url ( $xml->getDocumentElement->nonBlankChildNodes() ) {
+        push @entries,
+            $class->new(
+                map { $_->nodeName => $_->textContent } $url->nonBlankChildNodes
+            );
+    }
+
+    return @entries;
+}
+
+
+sub write {
+    my ($self, $fh, $format) = @_;
+
+    $format ||= 0;
+
+    my $writer = 'toFH';
+    my $xml = $self->as_xml;
+
+    unless ( ref $fh ) {
+        $writer = 'toFile';
+        if ( $fh =~ /\.gz$/i ) {
+            $xml->setCompression(8);
+        }
+    }
+
+    $xml->$writer( $fh, $format );
+}
+
+
+sub as_xml {
+    my $self = shift;
+
+    my $xml = XML::LibXML->createDocument('1.0','UTF-8');
+    my $root = $xml->createElement($self->_root_elem);
+
+    while (my ($k, $v) = each %{ $self->_root_ns() } ) {
+        $root->setAttribute($k, $v);
+    };
+
+    $root->appendChild($_) for
         map {
             my $xml = $_->as_xml;
-            ref $xml ? $xml : XML::Twig::Elt->parse($xml)
-        } $self->urls
-    );
-    $xt->set_root( $root );
+            blessed $xml ? $xml : XML::LibXML->load_xml(string => $xml)->documentElement()
+        } $self->_entries;
 
-    return $xt;
+    $xml->setDocumentElement($root);
+
+    return $xml;
 }
 
 
@@ -179,7 +194,7 @@ WWW::Sitemap::XML - XML Sitemap protocol
 
 =head1 VERSION
 
-version 1.103270
+version 1.103300
 
 =head1 SYNOPSIS
 
@@ -214,25 +229,16 @@ version 1.103270
     # load urls from existing sitemap.xml file
     $map->load( 'sitemap.xml' );
 
-    # get xml object
+    # get XML::LibXML object
     my $xml = $map->as_xml;
-    $xml->set_pretty_print('indented');
 
-    print $xml->sprint;
+    print $xml->toString(1);
 
     # write to file
-    $map->write( 'sitemap.xml', pretty_print => 'indented' );
+    $map->write( 'sitemap.xml', my $pretty_print = 1 );
 
     # write compressed
     $map->write( 'sitemap.xml.gz' );
-
-    # or
-    my $cfh = IO::Zlib->new();
-    $cfh->open("sitemap.xml.gz", "wb9");
-
-    $map->write( $cfh );
-
-    $cfh->close;
 
 =head1 DESCRIPTION
 
@@ -283,81 +289,83 @@ Performs basic validation of urls added:
 
 =back
 
-=head2 load($sitemap)
+=head2 urls
 
-    $map->load( $sitemap );
+    my @urls = $map->urls;
+
+Returns a list of all URL objects added to sitemap.
+
+=head2 load(%sitemap_location)
+
+    $map->load( location => $sitemap_file );
 
 It is a shortcut for:
 
-    $map->add($_) for $map->read($sitemap);
+    $map->add($_) for $map->read( location => $sitemap_file );
 
 Please see L<"read"> for details.
 
-=head2 read($sitemap)
+=head2 read(%sitemap_location)
 
-    my @urls = $map->read( $sitemap );
+    # file or url to sitemap
+    my @urls = $map->read( location => $file_or_url );
 
-Read the content of C<$sitemap> and return the list of
-L<WWW::Sitemap::XML::URL> objects representing single C<E<lt>urlE<gt>>
-element.
+    # file handle
+    my @urls = $map->read( IO => $fh );
 
-C<$sitemap> could be either a string containing the whole XML sitemap, a
-filename of a sitemap file or an open L<IO::Handle>.
+    # xml string
+    my @urls = $map->read( string => $xml );
 
-=head2 write($file, %options)
+Read the sitemap from file, URL, open file handle or string and return the list of
+L<WWW::Sitemap::XML::URL> objects representing C<E<lt>urlE<gt>> elements.
+
+=head2 write($file, $format = 0)
 
     # write to file
-    $map->write( 'sitemap.xml', pretty_print => 'indented');
+    $map->write( 'sitemap.xml', my $pretty_print = 1);
 
     # or
     my $fh = IO::File->new();
-    $fh->open("sitemap.xml", ">:utf8");
-    $map->write( $fh, pretty_print => 'indented');
+    $fh->open('sitemap.xml', 'w');
+    $map->write( $fh, my $pretty_print = 1);
     $cfh->close;
 
     # write compressed
     $map->write( 'sitemap.xml.gz' );
 
-    # or
-    my $cfh = IO::Zlib->new();
-    $cfh->open("sitemap.xml.gz", "wb9");
-    $map->write( $cfh );
-    $cfh->close;
-
 Write XML sitemap to C<$file> - a file name or L<IO::Handle> object.
 
-If file names ends in C<.gz> then the output file will be compressed using
-L<IO::Zlib>.
+If file names ends in C<.gz> then the output file will be compressed by
+setting compression on xml object - please note that it requires I<libxml2> to
+be compiled with I<zlib> support.
 
-Optional C<%options> are passed to C<flush> or C<print_to_file> methods
+Optional C<$format> is passed to C<toFH> or C<toFile> methods
 (depending on the type of C<$file>, respectively for file handle and file name)
-as decribed in L<XML::Twig>.
+as described in L<XML::LibXML>.
 
 =head2 as_xml
 
     my $xml = $map->as_xml;
 
-    $xml->set_pretty_print('indented');
-
-    open SITEMAP, ">sitemap.xml";
-    print SITEMAP $xml->sprint;
-    close SITEMAP;
+    # pretty print
+    print $xml->toString(1);
 
     # write compressed
-    $xml->set_pretty_print('none');
+    $xml->setCompression(8);
+    $xml->toFile( 'sitemap.xml.gz' );
 
-    my $cfh = IO::Zlib->new();
-    $cfh->open("sitemap.xml.gz", "wb9");
+Returns L<XML::LibXML::Document> object representing the sitemap in XML format.
 
-    print $cfh $xml->sprint;
-
-    $cfh->close;
-
-Returns L<XML::Twig> object representing the sitemap in XML format.
+The C<E<lt>urlE<gt>> elements are built by calling I<as_xml> on all URL objects
+added into sitemap.
 
 =head1 SEE ALSO
 
 =over 4
+
+=item *
+
+L<WWW::SitemapIndex::XML>
 
 =item *
 

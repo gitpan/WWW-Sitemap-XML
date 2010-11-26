@@ -10,6 +10,7 @@ my %module_build_args = (
     'File::Find' => '0',
     'File::Temp' => '0',
     'IO::File' => '0',
+    'IO::Zlib' => '0',
     'Module::Build' => '0.3601',
     'Test::Exception' => '0',
     'Test::More' => '0',
@@ -25,13 +26,12 @@ my %module_build_args = (
     'Alex J. G. Burzyński <ajgb@cpan.org>'
   ],
   'dist_name' => 'WWW-Sitemap-XML',
-  'dist_version' => '1.103270',
+  'dist_version' => '1.103300',
   'license' => 'perl',
   'module_name' => 'WWW::Sitemap::XML',
   'recommends' => {},
   'recursive_test_files' => 1,
   'requires' => {
-    'IO::Zlib' => '0',
     'Moose' => '0',
     'Moose::Role' => '0',
     'Moose::Util::TypeConstraints' => '0',
@@ -40,7 +40,7 @@ my %module_build_args = (
     'MooseX::Types::Moose' => '0',
     'MooseX::Types::URI' => '0',
     'Scalar::Util' => '0',
-    'XML::Twig' => '0'
+    'XML::LibXML' => '1.70'
   },
   'script_files' => []
 );

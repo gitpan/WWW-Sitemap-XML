@@ -5,12 +5,13 @@ BEGIN {
   $WWW::Sitemap::XML::Types::AUTHORITY = 'cpan:AJGB';
 }
 BEGIN {
-  $WWW::Sitemap::XML::Types::VERSION = '1.103270';
+  $WWW::Sitemap::XML::Types::VERSION = '1.103300';
 }
 #ABSTRACT: Type constraints used by WWW::Sitemap::XML and WWW::Sitemap::XML::URL
 
 use MooseX::Types -declare => [qw(
     SitemapURL
+    SitemapIndexSitemap
 
     Location
     ChangeFreq
@@ -29,6 +30,16 @@ subtype SitemapURL,
     message {
         'object does not implement WWW::Sitemap::XML::URL::Interface'
     };
+
+subtype SitemapIndexSitemap,
+    as Object,
+    where {
+        $_->meta->does_role('WWW::SitemapIndex::XML::Sitemap::Interface')
+    },
+    message {
+        'object does not implement WWW::SitemapIndex::XML::Sitemap::Interface'
+    };
+
 
 # <loc>
 subtype Location,
@@ -57,7 +68,6 @@ subtype Priority,
     message { 'Valid priority ranges from 0.0 to 1.0'};
 
 
-
 no Moose::Util::TypeConstraints;
 
 1;
@@ -74,22 +84,13 @@ WWW::Sitemap::XML::Types - Type constraints used by WWW::Sitemap::XML and WWW::S
 
 =head1 VERSION
 
-version 1.103270
+version 1.103300
 
 =head1 DESCRIPTION
 
 Type constraints used by L<WWW::Sitemap::XML> and L<WWW::Sitemap::XML::URL>.
 
 =head1 TYPES
-
-=head2 SitemapURL
-
-    has 'url' => (
-        is => 'rw',
-        isa => SitemapURL,
-    );
-
-Subtype of C<Object>, argument needs to implement L<WWW::Sitemap::XML::URL::Interface>.
 
 =head2 Location
 
@@ -135,6 +136,24 @@ Valid values are:
     );
 
 Subtype of C<Num> with values in range from C<0.0> to C<1.0>.
+
+=head2 SitemapURL
+
+    has 'url' => (
+        is => 'rw',
+        isa => SitemapURL,
+    );
+
+Subtype of C<Object>, argument needs to implement L<WWW::Sitemap::XML::URL::Interface>.
+
+=head2 SitemapIndexSitemap
+
+    has 'sitemap' => (
+        is => 'rw',
+        isa => SitemapIndexSitemap,
+    );
+
+Subtype of C<Object>, argument needs to implement L<WWW::SitemapIndex::XML::Sitemap::Interface>.
 
 =head1 SEE ALSO
 

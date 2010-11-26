@@ -15,6 +15,7 @@ my %WriteMakefileArgs = (
     'File::Find' => '0',
     'File::Temp' => '0',
     'IO::File' => '0',
+    'IO::Zlib' => '0',
     'Module::Build' => '0.3601',
     'Test::Exception' => '0',
     'Test::More' => '0',
@@ -30,7 +31,6 @@ my %WriteMakefileArgs = (
   'LICENSE' => 'perl',
   'NAME' => 'WWW::Sitemap::XML',
   'PREREQ_PM' => {
-    'IO::Zlib' => '0',
     'Moose' => '0',
     'Moose::Role' => '0',
     'Moose::Util::TypeConstraints' => '0',
@@ -39,9 +39,9 @@ my %WriteMakefileArgs = (
     'MooseX::Types::Moose' => '0',
     'MooseX::Types::URI' => '0',
     'Scalar::Util' => '0',
-    'XML::Twig' => '0'
+    'XML::LibXML' => '1.70'
   },
-  'VERSION' => '1.103270',
+  'VERSION' => '1.103300',
   'test' => {
     'TESTS' => 't/*.t'
   }

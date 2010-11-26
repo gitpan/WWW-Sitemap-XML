@@ -2,7 +2,7 @@ NAME
     WWW::Sitemap::XML - XML Sitemap protocol
 
 VERSION
-    version 1.103270
+    version 1.103300
 
 SYNOPSIS
         use WWW::Sitemap::XML;
@@ -36,25 +36,16 @@ SYNOPSIS
         # load urls from existing sitemap.xml file
         $map->load( 'sitemap.xml' );
 
-        # get xml object
+        # get XML::LibXML object
         my $xml = $map->as_xml;
-        $xml->set_pretty_print('indented');
 
-        print $xml->sprint;
+        print $xml->toString(1);
 
         # write to file
-        $map->write( 'sitemap.xml', pretty_print => 'indented' );
+        $map->write( 'sitemap.xml', my $pretty_print = 1 );
 
         # write compressed
         $map->write( 'sitemap.xml.gz' );
-
-        # or
-        my $cfh = IO::Zlib->new();
-        $cfh->open("sitemap.xml.gz", "wb9");
-
-        $map->write( $cfh );
-
-        $cfh->close;
 
 DESCRIPTION
     Read and write sitemap xml files as defined at
@@ -99,74 +90,76 @@ METHODS
 
     *   all URLs should use the same protocol and reside on same host
 
-  load($sitemap)
-        $map->load( $sitemap );
+  urls
+        my @urls = $map->urls;
+
+    Returns a list of all URL objects added to sitemap.
+
+  load(%sitemap_location)
+        $map->load( location => $sitemap_file );
 
     It is a shortcut for:
 
-        $map->add($_) for $map->read($sitemap);
+        $map->add($_) for $map->read( location => $sitemap_file );
 
     Please see "read" for details.
 
-  read($sitemap)
-        my @urls = $map->read( $sitemap );
+  read(%sitemap_location)
+        # file or url to sitemap
+        my @urls = $map->read( location => $file_or_url );
 
-    Read the content of $sitemap and return the list of
-    WWW::Sitemap::XML::URL objects representing single "<url>" element.
+        # file handle
+        my @urls = $map->read( IO => $fh );
 
-    $sitemap could be either a string containing the whole XML sitemap, a
-    filename of a sitemap file or an open IO::Handle.
+        # xml string
+        my @urls = $map->read( string => $xml );
 
-  write($file, %options)
+    Read the sitemap from file, URL, open file handle or string and return
+    the list of WWW::Sitemap::XML::URL objects representing "<url>"
+    elements.
+
+  write($file, $format = 0)
         # write to file
-        $map->write( 'sitemap.xml', pretty_print => 'indented');
+        $map->write( 'sitemap.xml', my $pretty_print = 1);
 
         # or
         my $fh = IO::File->new();
-        $fh->open("sitemap.xml", ">:utf8");
-        $map->write( $fh, pretty_print => 'indented');
+        $fh->open('sitemap.xml', 'w');
+        $map->write( $fh, my $pretty_print = 1);
         $cfh->close;
 
         # write compressed
         $map->write( 'sitemap.xml.gz' );
 
-        # or
-        my $cfh = IO::Zlib->new();
-        $cfh->open("sitemap.xml.gz", "wb9");
-        $map->write( $cfh );
-        $cfh->close;
-
     Write XML sitemap to $file - a file name or IO::Handle object.
 
-    If file names ends in ".gz" then the output file will be compressed
-    using IO::Zlib.
+    If file names ends in ".gz" then the output file will be compressed by
+    setting compression on xml object - please note that it requires
+    *libxml2* to be compiled with *zlib* support.
 
-    Optional %options are passed to "flush" or "print_to_file" methods
-    (depending on the type of $file, respectively for file handle and file
-    name) as decribed in XML::Twig.
+    Optional $format is passed to "toFH" or "toFile" methods (depending on
+    the type of $file, respectively for file handle and file name) as
+    described in XML::LibXML.
 
   as_xml
         my $xml = $map->as_xml;
 
-        $xml->set_pretty_print('indented');
-
-        open SITEMAP, ">sitemap.xml";
-        print SITEMAP $xml->sprint;
-        close SITEMAP;
+        # pretty print
+        print $xml->toString(1);
 
         # write compressed
-        $xml->set_pretty_print('none');
+        $xml->setCompression(8);
+        $xml->toFile( 'sitemap.xml.gz' );
 
-        my $cfh = IO::Zlib->new();
-        $cfh->open("sitemap.xml.gz", "wb9");
+    Returns XML::LibXML::Document object representing the sitemap in XML
+    format.
 
-        print $cfh $xml->sprint;
-
-        $cfh->close;
-
-    Returns XML::Twig object representing the sitemap in XML format.
+    The "<url>" elements are built by calling *as_xml* on all URL objects
+    added into sitemap.
 
 SEE ALSO
+    *   WWW::SitemapIndex::XML
+
     *   <http://www.sitemaps.org/>
 
     *   Search::Sitemap

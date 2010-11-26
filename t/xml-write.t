@@ -17,20 +17,20 @@ lives_ok {
 } 'test object created';
 
 lives_ok {
-    $o->load( _read('t/data/sitemap.xml') );
+    $o->load( string => _read('t/data/sitemap.xml') );
 } 'sitemap.xml loaded';
 
 is scalar $o->urls, 9, "all 9 URLs loaded";
 
 my $wfn = "t/data/sitemap-$$.xml";
 lives_ok {
-    $o->write( $wfn, pretty_print => 'indented' );
+    $o->write( $wfn, my $pretty_print = 1 );
 } 'written sitemap.xml via filename';
 
 my $o2;
 lives_ok {
     $o2 = WWW::Sitemap::XML->new();
-    $o2->load( _read($wfn) );
+    $o2->load( string => _read($wfn) );
 } '...and loaded back';
 
 is_deeply [ $o->urls ], [ $o2->urls ],
@@ -47,7 +47,7 @@ lives_ok {
     $o2 = WWW::Sitemap::XML->new();
     my $fh = IO::Zlib->new;
     $fh->open($wfn, "rb" );
-    $o2->load( $fh );
+    $o2->load( IO => $fh );
     $fh->close;
 } '...and loaded back';
 
@@ -59,13 +59,13 @@ unlink $wfn;
 $wfn = "t/data/sitemap2-$$.xml";
 my $fh = IO::File->new( $wfn, "w");
 lives_ok {
-    $o->write( $fh, pretty_print => 'indented' );
+    $o->write( $fh, my $pretty_print = 1 );
 } 'written sitemap.xml via filehandle';
 $fh->close;
 
 lives_ok {
     $o2 = WWW::Sitemap::XML->new();
-    $o2->load( _read($wfn) );
+    $o2->load( string => _read($wfn) );
 } '...and loaded back';
 
 is_deeply [ $o->urls ], [ $o2->urls ],
@@ -77,13 +77,13 @@ unlink $wfn;
 $wfn = "t/data/sitemap3-$$.xml";
 open SITEMAP1, ">", $wfn or die "Cannot open $wfn for writing: $!";
 lives_ok {
-    $o->write( \*SITEMAP1, pretty_print => 'indented' );
+    $o->write( \*SITEMAP1, my $pretty_print = 1 );
 } 'written sitemap.xml via filehandle';
 close SITEMAP1;
 
 lives_ok {
     $o2 = WWW::Sitemap::XML->new();
-    $o2->load( _read($wfn) );
+    $o2->load( string => _read($wfn) );
 } '...and loaded back';
 
 is_deeply [ $o->urls ], [ $o2->urls ],
