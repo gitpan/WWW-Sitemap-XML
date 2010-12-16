@@ -5,7 +5,7 @@ BEGIN {
   $WWW::SitemapIndex::XML::AUTHORITY = 'cpan:AJGB';
 }
 BEGIN {
-  $WWW::SitemapIndex::XML::VERSION = '1.103300';
+  $WWW::SitemapIndex::XML::VERSION = '1.103500';
 }
 #ABSTRACT: XML Sitemap index protocol
 
@@ -42,7 +42,7 @@ has '+_root_ns' => (
             'xmlns:xsi' => "http://www.w3.org/2001/XMLSchema-instance",
             'xsi:schemaLocation' => join(' ',
                 'http://www.sitemaps.org/schemas/sitemap/0.9',
-                'http://www.sitemaps.org/schemas/sitemap/0.9/sitemapindex.xsd'
+                'http://www.sitemaps.org/schemas/sitemap/0.9/siteindex.xsd'
             ),
         }
     },
@@ -73,7 +73,7 @@ WWW::SitemapIndex::XML - XML Sitemap index protocol
 
 =head1 VERSION
 
-version 1.103300
+version 1.103500
 
 =head1 SYNOPSIS
 

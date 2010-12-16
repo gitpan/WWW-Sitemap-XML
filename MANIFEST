@@ -37,4 +37,3 @@ t/xml-idx-write.t
 t/xml-load.t
 t/xml-read.t
 t/xml-write.t
-test-sitemaps.pl

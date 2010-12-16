@@ -2,7 +2,7 @@ NAME
     WWW::Sitemap::XML - XML Sitemap protocol
 
 VERSION
-    version 1.103300
+    version 1.103500
 
 SYNOPSIS
         use WWW::Sitemap::XML;

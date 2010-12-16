@@ -5,7 +5,7 @@ BEGIN {
   $WWW::Sitemap::XML::URL::AUTHORITY = 'cpan:AJGB';
 }
 BEGIN {
-  $WWW::Sitemap::XML::URL::VERSION = '1.103300';
+  $WWW::Sitemap::XML::URL::VERSION = '1.103500';
 }
 #ABSTRACT: XML Sitemap url entry
 
@@ -100,7 +100,7 @@ WWW::Sitemap::XML::URL - XML Sitemap url entry
 
 =head1 VERSION
 
-version 1.103300
+version 1.103500
 
 =head1 SYNOPSIS
 

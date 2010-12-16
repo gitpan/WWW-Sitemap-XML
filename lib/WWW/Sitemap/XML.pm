@@ -5,7 +5,7 @@ BEGIN {
   $WWW::Sitemap::XML::AUTHORITY = 'cpan:AJGB';
 }
 BEGIN {
-  $WWW::Sitemap::XML::VERSION = '1.103300';
+  $WWW::Sitemap::XML::VERSION = '1.103500';
 }
 #ABSTRACT: XML Sitemap protocol
 
@@ -194,7 +194,7 @@ WWW::Sitemap::XML - XML Sitemap protocol
 
 =head1 VERSION
 
-version 1.103300
+version 1.103500
 
 =head1 SYNOPSIS
 

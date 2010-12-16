@@ -5,7 +5,7 @@ BEGIN {
   $WWW::SitemapIndex::XML::Sitemap::Interface::AUTHORITY = 'cpan:AJGB';
 }
 BEGIN {
-  $WWW::SitemapIndex::XML::Sitemap::Interface::VERSION = '1.103300';
+  $WWW::SitemapIndex::XML::Sitemap::Interface::VERSION = '1.103500';
 }
 use Moose::Role;
 #ABSTRACT: Abstract interface for sitemap indexes' Sitemap classes
@@ -31,7 +31,7 @@ WWW::SitemapIndex::XML::Sitemap::Interface - Abstract interface for sitemap inde
 
 =head1 VERSION
 
-version 1.103300
+version 1.103500
 
 =head1 SYNOPSIS
 

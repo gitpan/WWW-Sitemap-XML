@@ -5,7 +5,7 @@ BEGIN {
   $WWW::Sitemap::XML::Types::AUTHORITY = 'cpan:AJGB';
 }
 BEGIN {
-  $WWW::Sitemap::XML::Types::VERSION = '1.103300';
+  $WWW::Sitemap::XML::Types::VERSION = '1.103500';
 }
 #ABSTRACT: Type constraints used by WWW::Sitemap::XML and WWW::Sitemap::XML::URL
 
@@ -84,7 +84,7 @@ WWW::Sitemap::XML::Types - Type constraints used by WWW::Sitemap::XML and WWW::S
 
 =head1 VERSION
 
-version 1.103300
+version 1.103500
 
 =head1 DESCRIPTION
 

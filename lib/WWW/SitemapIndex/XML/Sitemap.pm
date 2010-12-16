@@ -5,7 +5,7 @@ BEGIN {
   $WWW::SitemapIndex::XML::Sitemap::AUTHORITY = 'cpan:AJGB';
 }
 BEGIN {
-  $WWW::SitemapIndex::XML::Sitemap::VERSION = '1.103300';
+  $WWW::SitemapIndex::XML::Sitemap::VERSION = '1.103500';
 }
 #ABSTRACT: XML Sitemap index sitemap entry
 
@@ -84,7 +84,7 @@ WWW::SitemapIndex::XML::Sitemap - XML Sitemap index sitemap entry
 
 =head1 VERSION
 
-version 1.103300
+version 1.103500
 
 =head1 SYNOPSIS
 
