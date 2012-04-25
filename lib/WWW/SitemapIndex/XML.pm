@@ -4,8 +4,8 @@ package WWW::SitemapIndex::XML;
 BEGIN {
   $WWW::SitemapIndex::XML::AUTHORITY = 'cpan:AJGB';
 }
-BEGIN {
-  $WWW::SitemapIndex::XML::VERSION = '1.103500';
+{
+  $WWW::SitemapIndex::XML::VERSION = '1.121160';
 }
 #ABSTRACT: XML Sitemap index protocol
 
@@ -73,7 +73,7 @@ WWW::SitemapIndex::XML - XML Sitemap index protocol
 
 =head1 VERSION
 
-version 1.103500
+version 1.121160
 
 =head1 SYNOPSIS
 
@@ -234,11 +234,13 @@ objects added into sitemap index.
 
 =head1 SEE ALSO
 
+Please see those modules/websites for more information related to this module.
+
 =over 4
 
 =item *
 
-L<WWW::Sitemap::XML>
+L<WWW::Sitemap::XML|WWW::Sitemap::XML>
 
 =item *
 

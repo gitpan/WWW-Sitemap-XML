@@ -4,8 +4,8 @@ package WWW::Sitemap::XML::Types;
 BEGIN {
   $WWW::Sitemap::XML::Types::AUTHORITY = 'cpan:AJGB';
 }
-BEGIN {
-  $WWW::Sitemap::XML::Types::VERSION = '1.103500';
+{
+  $WWW::Sitemap::XML::Types::VERSION = '1.121160';
 }
 #ABSTRACT: Type constraints used by WWW::Sitemap::XML and WWW::Sitemap::XML::URL
 
@@ -84,7 +84,7 @@ WWW::Sitemap::XML::Types - Type constraints used by WWW::Sitemap::XML and WWW::S
 
 =head1 VERSION
 
-version 1.103500
+version 1.121160
 
 =head1 DESCRIPTION
 
@@ -157,11 +157,13 @@ Subtype of C<Object>, argument needs to implement L<WWW::SitemapIndex::XML::Site
 
 =head1 SEE ALSO
 
+Please see those modules/websites for more information related to this module.
+
 =over 4
 
 =item *
 
-L<WWW::Sitemap::XML>
+L<WWW::Sitemap::XML|WWW::Sitemap::XML>
 
 =back
 

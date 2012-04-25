@@ -4,8 +4,8 @@ package WWW::Sitemap::XML::URL;
 BEGIN {
   $WWW::Sitemap::XML::URL::AUTHORITY = 'cpan:AJGB';
 }
-BEGIN {
-  $WWW::Sitemap::XML::URL::VERSION = '1.103500';
+{
+  $WWW::Sitemap::XML::URL::VERSION = '1.121160';
 }
 #ABSTRACT: XML Sitemap url entry
 
@@ -100,7 +100,7 @@ WWW::Sitemap::XML::URL - XML Sitemap url entry
 
 =head1 VERSION
 
-version 1.103500
+version 1.121160
 
 =head1 SYNOPSIS
 
@@ -173,11 +173,13 @@ Returns L<XML::LibXML::Element> object representing the C<E<lt>urlE<gt>> entry i
 
 =head1 SEE ALSO
 
+Please see those modules/websites for more information related to this module.
+
 =over 4
 
 =item *
 
-L<WWW::Sitemap::XML>
+L<WWW::Sitemap::XML|WWW::Sitemap::XML>
 
 =item *
 

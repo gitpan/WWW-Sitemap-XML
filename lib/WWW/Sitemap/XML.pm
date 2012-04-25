@@ -4,8 +4,8 @@ package WWW::Sitemap::XML;
 BEGIN {
   $WWW::Sitemap::XML::AUTHORITY = 'cpan:AJGB';
 }
-BEGIN {
-  $WWW::Sitemap::XML::VERSION = '1.103500';
+{
+  $WWW::Sitemap::XML::VERSION = '1.121160';
 }
 #ABSTRACT: XML Sitemap protocol
 
@@ -194,7 +194,7 @@ WWW::Sitemap::XML - XML Sitemap protocol
 
 =head1 VERSION
 
-version 1.103500
+version 1.121160
 
 =head1 SYNOPSIS
 
@@ -242,7 +242,7 @@ version 1.103500
 
 =head1 DESCRIPTION
 
-Read and write sitemap xml files as defined at L<http://www.sitemaps.org/>.
+Read and write sitemap XML files as defined at L<http://www.sitemaps.org/>.
 
 =head1 METHODS
 
@@ -277,11 +277,11 @@ L<WWW::Sitemap::XML::URL> object.
     # is same as
     $map->add( loc => 'http://mywebsite.com/' );
 
-Performs basic validation of urls added:
+Performs basic validation of URLs added:
 
 =over
 
-=item * maximum of 50 000 urls in single sitemap
+=item * maximum of 50 000 URLs in single sitemap
 
 =item * URL no longer then 2048 characters
 
@@ -313,7 +313,7 @@ Please see L<"read"> for details.
     # file handle
     my @urls = $map->read( IO => $fh );
 
-    # xml string
+    # XML string
     my @urls = $map->read( string => $xml );
 
 Read the sitemap from file, URL, open file handle or string and return the list of
@@ -336,7 +336,7 @@ L<WWW::Sitemap::XML::URL> objects representing C<E<lt>urlE<gt>> elements.
 Write XML sitemap to C<$file> - a file name or L<IO::Handle> object.
 
 If file names ends in C<.gz> then the output file will be compressed by
-setting compression on xml object - please note that it requires I<libxml2> to
+setting compression on XML object - please note that it requires I<libxml2> to
 be compiled with I<zlib> support.
 
 Optional C<$format> is passed to C<toFH> or C<toFile> methods
@@ -360,6 +360,8 @@ The C<E<lt>urlE<gt>> elements are built by calling I<as_xml> on all URL objects
 added into sitemap.
 
 =head1 SEE ALSO
+
+Please see those modules/websites for more information related to this module.
 
 =over 4
 

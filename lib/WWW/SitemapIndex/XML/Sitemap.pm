@@ -4,8 +4,8 @@ package WWW::SitemapIndex::XML::Sitemap;
 BEGIN {
   $WWW::SitemapIndex::XML::Sitemap::AUTHORITY = 'cpan:AJGB';
 }
-BEGIN {
-  $WWW::SitemapIndex::XML::Sitemap::VERSION = '1.103500';
+{
+  $WWW::SitemapIndex::XML::Sitemap::VERSION = '1.121160';
 }
 #ABSTRACT: XML Sitemap index sitemap entry
 
@@ -84,7 +84,7 @@ WWW::SitemapIndex::XML::Sitemap - XML Sitemap index sitemap entry
 
 =head1 VERSION
 
-version 1.103500
+version 1.121160
 
 =head1 SYNOPSIS
 
@@ -139,11 +139,13 @@ entry in the sitemap.
 
 =head1 SEE ALSO
 
+Please see those modules/websites for more information related to this module.
+
 =over 4
 
 =item *
 
-L<WWW::Sitemap::XML>
+L<WWW::Sitemap::XML|WWW::Sitemap::XML>
 
 =item *
 

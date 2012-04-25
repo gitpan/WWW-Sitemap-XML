@@ -4,8 +4,8 @@ package WWW::SitemapIndex::XML::Sitemap::Interface;
 BEGIN {
   $WWW::SitemapIndex::XML::Sitemap::Interface::AUTHORITY = 'cpan:AJGB';
 }
-BEGIN {
-  $WWW::SitemapIndex::XML::Sitemap::Interface::VERSION = '1.103500';
+{
+  $WWW::SitemapIndex::XML::Sitemap::Interface::VERSION = '1.121160';
 }
 use Moose::Role;
 #ABSTRACT: Abstract interface for sitemap indexes' Sitemap classes
@@ -31,7 +31,7 @@ WWW::SitemapIndex::XML::Sitemap::Interface - Abstract interface for sitemap inde
 
 =head1 VERSION
 
-version 1.103500
+version 1.121160
 
 =head1 SYNOPSIS
 
@@ -65,11 +65,13 @@ XML representing the C<E<lt>sitemapE<gt>> entry in the sitemap index.
 
 =head1 SEE ALSO
 
+Please see those modules/websites for more information related to this module.
+
 =over 4
 
 =item *
 
-L<WWW::Sitemap::XML>
+L<WWW::Sitemap::XML|WWW::Sitemap::XML>
 
 =back
 

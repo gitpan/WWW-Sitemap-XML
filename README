@@ -2,7 +2,7 @@ NAME
     WWW::Sitemap::XML - XML Sitemap protocol
 
 VERSION
-    version 1.103500
+    version 1.121160
 
 SYNOPSIS
         use WWW::Sitemap::XML;
@@ -48,7 +48,7 @@ SYNOPSIS
         $map->write( 'sitemap.xml.gz' );
 
 DESCRIPTION
-    Read and write sitemap xml files as defined at
+    Read and write sitemap XML files as defined at
     <http://www.sitemaps.org/>.
 
 METHODS
@@ -82,9 +82,9 @@ METHODS
         # is same as
         $map->add( loc => 'http://mywebsite.com/' );
 
-    Performs basic validation of urls added:
+    Performs basic validation of URLs added:
 
-    *   maximum of 50 000 urls in single sitemap
+    *   maximum of 50 000 URLs in single sitemap
 
     *   URL no longer then 2048 characters
 
@@ -111,7 +111,7 @@ METHODS
         # file handle
         my @urls = $map->read( IO => $fh );
 
-        # xml string
+        # XML string
         my @urls = $map->read( string => $xml );
 
     Read the sitemap from file, URL, open file handle or string and return
@@ -134,7 +134,7 @@ METHODS
     Write XML sitemap to $file - a file name or IO::Handle object.
 
     If file names ends in ".gz" then the output file will be compressed by
-    setting compression on xml object - please note that it requires
+    setting compression on XML object - please note that it requires
     *libxml2* to be compiled with *zlib* support.
 
     Optional $format is passed to "toFH" or "toFile" methods (depending on
@@ -158,6 +158,9 @@ METHODS
     added into sitemap.
 
 SEE ALSO
+    Please see those modules/websites for more information related to this
+    module.
+
     *   WWW::SitemapIndex::XML
 
     *   <http://www.sitemaps.org/>

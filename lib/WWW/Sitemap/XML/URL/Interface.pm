@@ -4,8 +4,8 @@ package WWW::Sitemap::XML::URL::Interface;
 BEGIN {
   $WWW::Sitemap::XML::URL::Interface::AUTHORITY = 'cpan:AJGB';
 }
-BEGIN {
-  $WWW::Sitemap::XML::URL::Interface::VERSION = '1.103500';
+{
+  $WWW::Sitemap::XML::URL::Interface::VERSION = '1.121160';
 }
 use Moose::Role;
 #ABSTRACT: Abstract interface for sitemap's URL classes
@@ -31,7 +31,7 @@ WWW::Sitemap::XML::URL::Interface - Abstract interface for sitemap's URL classes
 
 =head1 VERSION
 
-version 1.103500
+version 1.121160
 
 =head1 SYNOPSIS
 
@@ -73,11 +73,13 @@ XML representing the C<E<lt>urlE<gt>> entry in the sitemap.
 
 =head1 SEE ALSO
 
+Please see those modules/websites for more information related to this module.
+
 =over 4
 
 =item *
 
-L<WWW::Sitemap::XML>
+L<WWW::Sitemap::XML|WWW::Sitemap::XML>
 
 =back
 
