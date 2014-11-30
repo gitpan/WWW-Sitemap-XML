@@ -5,7 +5,7 @@ package WWW::SitemapIndex::XML::Sitemap::Interface;
 BEGIN {
   $WWW::SitemapIndex::XML::Sitemap::Interface::AUTHORITY = 'cpan:AJGB';
 }
-$WWW::SitemapIndex::XML::Sitemap::Interface::VERSION = '2.00';
+$WWW::SitemapIndex::XML::Sitemap::Interface::VERSION = '2.01';
 use Moose::Role;
 
 requires qw(
@@ -29,7 +29,7 @@ WWW::SitemapIndex::XML::Sitemap::Interface - Abstract interface for sitemap inde
 
 =head1 VERSION
 
-version 2.00
+version 2.01
 
 =head1 SYNOPSIS
 

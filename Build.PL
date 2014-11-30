@@ -19,7 +19,7 @@ my %module_build_args = (
     "Alex J. G. Burzy\x{144}ski <ajgb\@cpan.org>"
   ],
   "dist_name" => "WWW-Sitemap-XML",
-  "dist_version" => "2.00",
+  "dist_version" => "2.01",
   "license" => "perl",
   "module_name" => "WWW::Sitemap::XML",
   "recommends" => {},

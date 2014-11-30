@@ -5,7 +5,7 @@ package WWW::Sitemap::XML::Google::Video::Interface;
 BEGIN {
   $WWW::Sitemap::XML::Google::Video::Interface::AUTHORITY = 'cpan:AJGB';
 }
-$WWW::Sitemap::XML::Google::Video::Interface::VERSION = '2.00';
+$WWW::Sitemap::XML::Google::Video::Interface::VERSION = '2.01';
 use Moose::Role;
 
 requires qw(
@@ -27,7 +27,7 @@ WWW::Sitemap::XML::Google::Video::Interface - Abstract interface for Google exte
 
 =head1 VERSION
 
-version 2.00
+version 2.01
 
 =head1 SYNOPSIS
 

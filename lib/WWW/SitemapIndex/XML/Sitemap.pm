@@ -5,7 +5,7 @@ package WWW::SitemapIndex::XML::Sitemap;
 BEGIN {
   $WWW::SitemapIndex::XML::Sitemap::AUTHORITY = 'cpan:AJGB';
 }
-$WWW::SitemapIndex::XML::Sitemap::VERSION = '2.00';
+$WWW::SitemapIndex::XML::Sitemap::VERSION = '2.01';
 use Moose;
 use WWW::Sitemap::XML::Types qw( Location );
 use MooseX::Types::DateTime::W3C qw( DateTimeW3C );
@@ -81,7 +81,7 @@ WWW::SitemapIndex::XML::Sitemap - XML Sitemap index sitemap entry
 
 =head1 VERSION
 
-version 2.00
+version 2.01
 
 =head1 SYNOPSIS
 
@@ -90,7 +90,7 @@ version 2.00
         lastmod => '2010-11-26',
     );
 
-XML sample:
+XML output:
 
     <?xml version="1.0" encoding="UTF-8"?>
     <sitemapindex xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
@@ -102,16 +102,13 @@ XML sample:
 
 =head1 DESCRIPTION
 
-WWW::SitemapIndex::XML::Sitemap represents single sitemap entry in sitemap
-index file.
+WWW::SitemapIndex::XML::Sitemap represents single sitemap entry in sitemaps index file.
 
 Class implements L<WWW::SitemapIndex::XML::Sitemap::Interface>.
 
 =head1 ATTRIBUTES
 
 =head2 loc
-
-    $url->loc('http://mywebsite.com/sitemap1.xml.gz')
 
 URL of the sitemap.
 
@@ -132,7 +129,7 @@ Optional.
 =head2 as_xml
 
 Returns L<XML::LibXML::Element> object representing the C<E<lt>sitemapE<gt>>
-entry in the sitemap.
+entry in the sitemaps index.
 
 =head1 SEE ALSO
 

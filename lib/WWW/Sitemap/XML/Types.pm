@@ -5,7 +5,7 @@ package WWW::Sitemap::XML::Types;
 BEGIN {
   $WWW::Sitemap::XML::Types::AUTHORITY = 'cpan:AJGB';
 }
-$WWW::Sitemap::XML::Types::VERSION = '2.00';
+$WWW::Sitemap::XML::Types::VERSION = '2.01';
 use MooseX::Types -declare => [qw(
     SitemapURL
     SitemapIndexSitemap
@@ -182,7 +182,7 @@ WWW::Sitemap::XML::Types - Type constraints used by WWW::Sitemap::XML and WWW::S
 
 =head1 VERSION
 
-version 2.00
+version 2.01
 
 =head1 DESCRIPTION
 
@@ -263,7 +263,7 @@ Role type, argument needs to implement L<WWW::SitemapIndex::XML::Sitemap::Interf
 
 Subtype of C<Str>, with only lowercase characters.
 
-Coerces from Str using C<lc>.
+Coerces from C<Str> using C<lc>.
 
 =head2 Max100CharsStr
 
@@ -293,7 +293,7 @@ Subtype of C<Str>, up to 2048 characters.
 
 Subtype of C<LowercaseStr>, with valid values I<yes> and I<no>.
 
-Coerces from I<Bool>.
+Coerces from C<Bool>.
 
 =head2 ImageObject
 
@@ -305,7 +305,7 @@ Coerces from I<Bool>.
 
 Role type, argument needs to implement L<WWW::Sitemap::XML::Google::Image::Interface>.
 
-Coerces from I<HashRef> by creating L<WWW::Sitemap::XML::Google::Image> object.
+Coerces from C<HashRef> by creating L<WWW::Sitemap::XML::Google::Image> object.
 
 =head2 ArrayRefOfImageObjects
 
@@ -317,7 +317,7 @@ Coerces from I<HashRef> by creating L<WWW::Sitemap::XML::Google::Image> object.
 
 Subtype of C<ArrayRef>, were values are L<"ImageObject"> elements.
 
-Coerces from I<ArrayRef[HashRef]> by creating an array of L<WWW::Sitemap::XML::Google::Image> objects.
+Coerces from C<ArrayRef[HashRef]> by creating an array of L<WWW::Sitemap::XML::Google::Image> objects.
 
 =head2 VideoObject
 
@@ -329,7 +329,7 @@ Coerces from I<ArrayRef[HashRef]> by creating an array of L<WWW::Sitemap::XML::G
 
 Role type, argument needs to implement L<WWW::Sitemap::XML::Google::Video::Interface>.
 
-Coerces from I<HashRef> by creating L<WWW::Sitemap::XML::Google::Video> object.
+Coerces from C<HashRef> by creating L<WWW::Sitemap::XML::Google::Video> object.
 
 =head2 ArrayRefOfVideoObjects
 
@@ -341,7 +341,7 @@ Coerces from I<HashRef> by creating L<WWW::Sitemap::XML::Google::Video> object.
 
 Subtype of C<ArrayRef>, were values are L<"VideoObject"> elements.
 
-Coerces from I<ArrayRef[HashRef]> by creating an array of L<WWW::Sitemap::XML::Google::Video> objects.
+Coerces from C<ArrayRef[HashRef]> by creating an array of L<WWW::Sitemap::XML::Google::Video> objects.
 
 =head2 VideoPlayer
 
@@ -353,10 +353,10 @@ Coerces from I<ArrayRef[HashRef]> by creating an array of L<WWW::Sitemap::XML::G
 
 Role type, argument needs to implement L<WWW::Sitemap::XML::Google::Video::Player::Interface>.
 
-Coerces from I<HashRef> by creating L<WWW::Sitemap::XML::Google::Video::Player> object.
+Coerces from C<HashRef> by creating L<WWW::Sitemap::XML::Google::Video::Player> object.
 
-Coerces from I<Str> by creating L<WWW::Sitemap::XML::Google::Video::Player>
-object, where the string is used as <WWW::Sitemap::XML::Google::Video::Player/"loc">.
+Coerces from C<Str> by creating L<WWW::Sitemap::XML::Google::Video::Player>
+object, where the string is used as L<WWW::Sitemap::XML::Google::Video::Player/"loc">.
 
 =head1 AUTHOR
 

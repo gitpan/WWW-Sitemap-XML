@@ -5,7 +5,7 @@ package WWW::Sitemap::XML::Google::Image;
 BEGIN {
   $WWW::Sitemap::XML::Google::Image::AUTHORITY = 'cpan:AJGB';
 }
-$WWW::Sitemap::XML::Google::Image::VERSION = '2.00';
+$WWW::Sitemap::XML::Google::Image::VERSION = '2.01';
 use Moose;
 use WWW::Sitemap::XML::Types qw( Location );
 use XML::LibXML;
@@ -103,7 +103,7 @@ WWW::Sitemap::XML::Google::Image - XML Sitemap Google extension image entry
 
 =head1 VERSION
 
-version 2.00
+version 2.01
 
 =head1 SYNOPSIS
 
@@ -148,7 +148,7 @@ Required.
 
 The caption of the image.
 
-isa: I<Str>
+isa: C<Str>
 
 Optional.
 
@@ -156,7 +156,7 @@ Optional.
 
 The title of the image.
 
-isa: I<Str>
+isa: C<Str>
 
 Optional.
 
@@ -164,7 +164,7 @@ Optional.
 
 The geographic location of the image.
 
-isa: I<Str>
+isa: C<Str>
 
 Optional.
 

@@ -5,7 +5,7 @@ package WWW::Sitemap::XML::Google::Video::Player;
 BEGIN {
   $WWW::Sitemap::XML::Google::Video::Player::AUTHORITY = 'cpan:AJGB';
 }
-$WWW::Sitemap::XML::Google::Video::Player::VERSION = '2.00';
+$WWW::Sitemap::XML::Google::Video::Player::VERSION = '2.01';
 use Moose;
 use WWW::Sitemap::XML::Types qw( Location StrBool );
 
@@ -85,7 +85,7 @@ WWW::Sitemap::XML::Google::Video::Player - XML Sitemap Google extension video pl
 
 =head1 VERSION
 
-version 2.00
+version 2.01
 
 =head1 SYNOPSIS
 
@@ -133,7 +133,7 @@ Optional.
 User-defined string that Google may append (if appropriate) to the flashvars
 parameter to enable autoplay of the video.
 
-isa: I<Str>
+isa: C<Str>
 
 Optional.
 

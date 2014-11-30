@@ -5,7 +5,7 @@ package WWW::Sitemap::XML::Google::Video;
 BEGIN {
   $WWW::Sitemap::XML::Google::Video::AUTHORITY = 'cpan:AJGB';
 }
-$WWW::Sitemap::XML::Google::Video::VERSION = '2.00';
+$WWW::Sitemap::XML::Google::Video::VERSION = '2.01';
 use Moose;
 use WWW::Sitemap::XML::Types qw( Location VideoPlayer Max100CharsStr Max2048CharsStr );
 use XML::LibXML;
@@ -107,19 +107,17 @@ WWW::Sitemap::XML::Google::Video - XML Sitemap Google extension video entry
 
 =head1 VERSION
 
-version 2.00
+version 2.01
 
 =head1 SYNOPSIS
 
     my $video = WWW::Sitemap::XML::Google::Video->new(
         content_loc => 'http://mywebsite.com/video1.flv',
-        player => WWW::Sitemap::XML::Google::Video::Player->new(
-            {
-                loc => 'http://mywebsite.com/video_player.swf?video=1',
-                allow_embed => "yes",
-                autoplay => "ap=1",
-            }
-        ),
+        player => {
+            loc => 'http://mywebsite.com/video_player.swf?video=1',
+            allow_embed => "yes",
+            autoplay => "ap=1",
+        },
         thumbnail_loc => 'http://mywebsite.com/thumbs/1.jpg',
         title => 'Video Title 1',
         description => 'Video Description 1',

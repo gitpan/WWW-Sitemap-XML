@@ -5,7 +5,7 @@ package WWW::SitemapIndex::XML;
 BEGIN {
   $WWW::SitemapIndex::XML::AUTHORITY = 'cpan:AJGB';
 }
-$WWW::SitemapIndex::XML::VERSION = '2.00';
+$WWW::SitemapIndex::XML::VERSION = '2.01';
 use Moose;
 extends qw( WWW::Sitemap::XML );
 
@@ -75,7 +75,7 @@ WWW::SitemapIndex::XML - XML Sitemap index protocol
 
 =head1 VERSION
 
-version 2.00
+version 2.01
 
 =head1 SYNOPSIS
 
