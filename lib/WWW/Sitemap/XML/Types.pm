@@ -1,45 +1,38 @@
+#ABSTRACT: Type constraints used by WWW::Sitemap::XML and WWW::Sitemap::XML::URL
 use strict;
 use warnings;
 package WWW::Sitemap::XML::Types;
 BEGIN {
   $WWW::Sitemap::XML::Types::AUTHORITY = 'cpan:AJGB';
 }
-{
-  $WWW::Sitemap::XML::Types::VERSION = '1.121160';
-}
-#ABSTRACT: Type constraints used by WWW::Sitemap::XML and WWW::Sitemap::XML::URL
-
+$WWW::Sitemap::XML::Types::VERSION = '2.00';
 use MooseX::Types -declare => [qw(
     SitemapURL
     SitemapIndexSitemap
 
     Location
     ChangeFreq
+    LowercaseStr
     Priority
+
+    VideoPlayer
+    VideoObject
+    ArrayRefOfVideoObjects
+    ImageObject
+    ArrayRefOfImageObjects
+    StrBool
+    Max100CharsStr
+    Max2048CharsStr
 )];
 
 use Moose::Util::TypeConstraints;
-use MooseX::Types::Moose qw( Object Str Num );
+use MooseX::Types::Moose qw( Object Str Num Bool ArrayRef HashRef );
 use MooseX::Types::URI qw( Uri );
+use Scalar::Util qw( blessed );
 
-subtype SitemapURL,
-    as Object,
-    where {
-        $_->meta->does_role('WWW::Sitemap::XML::URL::Interface')
-    },
-    message {
-        'object does not implement WWW::Sitemap::XML::URL::Interface'
-    };
+role_type SitemapURL, { role => 'WWW::Sitemap::XML::URL::Interface' };
 
-subtype SitemapIndexSitemap,
-    as Object,
-    where {
-        $_->meta->does_role('WWW::SitemapIndex::XML::Sitemap::Interface')
-    },
-    message {
-        'object does not implement WWW::SitemapIndex::XML::Sitemap::Interface'
-    };
-
+role_type SitemapIndexSitemap, { role => 'WWW::SitemapIndex::XML::Sitemap::Interface' };
 
 # <loc>
 subtype Location,
@@ -54,10 +47,42 @@ coerce Location,
     from Uri,
     via { $_->as_string };
 
+subtype LowercaseStr,
+    as Str,
+    where {
+        $_ eq lc($_)
+    },
+    message { "$_ contains uppercase characters" };
+
+coerce LowercaseStr,
+    from Str,
+    via { lc($_) };
+
+subtype Max100CharsStr,
+    as Str,
+    where {
+        length($_) <= 100
+    },
+    message { "Maximum of 100 characters allowed" };
+
+subtype Max2048CharsStr,
+    as Str,
+    where {
+        length($_) <= 2048
+    },
+    message { "Maximum of 2048 characters allowed" };
+
 # <changefreq>
+my %valid_changefreqs = map { $_ => 1 } qw( always hourly daily weekly monthly yearly never );
 subtype ChangeFreq,
-    as enum([ qw( always hourly daily weekly monthly yearly never ) ]),
-    message { 'Invalid changefreq' };
+    as LowercaseStr,
+    where {
+        exists $valid_changefreqs{$_}
+    };
+
+coerce ChangeFreq,
+    from Str,
+    via { lc($_) };
 
 # <priority>
 subtype Priority,
@@ -67,16 +92,89 @@ subtype Priority,
     },
     message { 'Valid priority ranges from 0.0 to 1.0'};
 
+# allow_embed
+my %valid_str_bool = ( yes => 1, no => 1 );
+subtype StrBool,
+    as LowercaseStr,
+    where {
+        exists $valid_str_bool{ lc($_) }
+    };
+
+coerce StrBool,
+    from Bool,
+    via { $_ ? 'yes' : 'no' };
+
+role_type VideoObject, { role => 'WWW::Sitemap::XML::Google::Video::Interface' };
+
+coerce VideoObject,
+    from HashRef,
+    via {
+        return WWW::Sitemap::XML::Google::Video->new( %{ $_ || {} } )
+    };
+
+subtype ArrayRefOfVideoObjects,
+    as ArrayRef[VideoObject];
+
+coerce ArrayRefOfVideoObjects,
+    from ArrayRef[HashRef|Object],
+    via {
+        [
+            map { blessed($_) ? $_ : WWW::Sitemap::XML::Google::Video->new( %{ $_ || {} } ) } @$_
+        ]
+    };
+
+role_type ImageObject, { role => 'WWW::Sitemap::XML::Google::Image::Interface' };
+
+coerce ImageObject,
+    from HashRef,
+    via {
+        return WWW::Sitemap::XML::Google::Image->new( %{ $_ || {} } )
+    };
+
+subtype ArrayRefOfImageObjects,
+    as ArrayRef[ImageObject],
+    where {
+        scalar(@$_) <= 1000
+    };
+
+coerce ArrayRefOfImageObjects,
+    from ArrayRef[HashRef|Object],
+    via {
+        [
+            map { blessed($_) ? $_ : WWW::Sitemap::XML::Google::Image->new( %{ $_ || {} } ) } @$_
+        ]
+    };
+
+
+role_type VideoPlayer, { role => 'WWW::Sitemap::XML::Google::Video::Player::Interface' };
+
+coerce VideoPlayer,
+    from HashRef,
+    via {
+        WWW::Sitemap::XML::Google::Video::Player->new( %{ $_ || {} } )
+    };
+
+coerce VideoPlayer,
+    from Str,
+    via {
+        WWW::Sitemap::XML::Google::Video::Player->new( loc => $_ )
+    };
+
+# runtime to avoid circular references
+require WWW::Sitemap::XML::Google::Image;
+require WWW::Sitemap::XML::Google::Video;
+require WWW::Sitemap::XML::Google::Video::Player;
+
 
 no Moose::Util::TypeConstraints;
 
 1;
 
-
 __END__
+
 =pod
 
-=encoding utf-8
+=encoding UTF-8
 
 =head1 NAME
 
@@ -84,7 +182,7 @@ WWW::Sitemap::XML::Types - Type constraints used by WWW::Sitemap::XML and WWW::S
 
 =head1 VERSION
 
-version 1.121160
+version 2.00
 
 =head1 DESCRIPTION
 
@@ -144,7 +242,7 @@ Subtype of C<Num> with values in range from C<0.0> to C<1.0>.
         isa => SitemapURL,
     );
 
-Subtype of C<Object>, argument needs to implement L<WWW::Sitemap::XML::URL::Interface>.
+Role type, argument needs to implement L<WWW::Sitemap::XML::URL::Interface>.
 
 =head2 SitemapIndexSitemap
 
@@ -153,19 +251,112 @@ Subtype of C<Object>, argument needs to implement L<WWW::Sitemap::XML::URL::Inte
         isa => SitemapIndexSitemap,
     );
 
-Subtype of C<Object>, argument needs to implement L<WWW::SitemapIndex::XML::Sitemap::Interface>.
+Role type, argument needs to implement L<WWW::SitemapIndex::XML::Sitemap::Interface>.
 
-=head1 SEE ALSO
+=head2 LowercaseStr
 
-Please see those modules/websites for more information related to this module.
+    has 'lowercase' => (
+        is => 'rw',
+        coerce => 1,
+        isa => LowercaseStr,
+    );
 
-=over 4
+Subtype of C<Str>, with only lowercase characters.
 
-=item *
+Coerces from Str using C<lc>.
 
-L<WWW::Sitemap::XML|WWW::Sitemap::XML>
+=head2 Max100CharsStr
 
-=back
+    has 'short_str' => (
+        is => 'rw',
+        isa => Max100CharsStr,
+    );
+
+Subtype of C<Str>, up to 100 characters.
+
+=head2 Max2048CharsStr
+
+    has 'longer_str' => (
+        is => 'rw',
+        isa => Max2048CharsStr,
+    );
+
+Subtype of C<Str>, up to 2048 characters.
+
+=head2 StrBool
+
+    has 'yes_no' => (
+        is => 'rw',
+        coerce => 1,
+        isa => StrBool,
+    );
+
+Subtype of C<LowercaseStr>, with valid values I<yes> and I<no>.
+
+Coerces from I<Bool>.
+
+=head2 ImageObject
+
+    has 'image' => (
+        is => 'rw',
+        coerce => 1,
+        isa => ImageObject,
+    );
+
+Role type, argument needs to implement L<WWW::Sitemap::XML::Google::Image::Interface>.
+
+Coerces from I<HashRef> by creating L<WWW::Sitemap::XML::Google::Image> object.
+
+=head2 ArrayRefOfImageObjects
+
+    has 'images' => (
+        is => 'rw',
+        coerce => 1,
+        isa => ArrayRefOfImageObjects,
+    );
+
+Subtype of C<ArrayRef>, were values are L<"ImageObject"> elements.
+
+Coerces from I<ArrayRef[HashRef]> by creating an array of L<WWW::Sitemap::XML::Google::Image> objects.
+
+=head2 VideoObject
+
+    has 'video' => (
+        is => 'rw',
+        coerce => 1,
+        isa => VideoObject,
+    );
+
+Role type, argument needs to implement L<WWW::Sitemap::XML::Google::Video::Interface>.
+
+Coerces from I<HashRef> by creating L<WWW::Sitemap::XML::Google::Video> object.
+
+=head2 ArrayRefOfVideoObjects
+
+    has 'videos' => (
+        is => 'rw',
+        coerce => 1,
+        isa => ArrayRefOfVideoObjects,
+    );
+
+Subtype of C<ArrayRef>, were values are L<"VideoObject"> elements.
+
+Coerces from I<ArrayRef[HashRef]> by creating an array of L<WWW::Sitemap::XML::Google::Video> objects.
+
+=head2 VideoPlayer
+
+    has 'video_player' => (
+        is => 'rw',
+        coerce => 1,
+        isa => VideoPlayer,
+    );
+
+Role type, argument needs to implement L<WWW::Sitemap::XML::Google::Video::Player::Interface>.
+
+Coerces from I<HashRef> by creating L<WWW::Sitemap::XML::Google::Video::Player> object.
+
+Coerces from I<Str> by creating L<WWW::Sitemap::XML::Google::Video::Player>
+object, where the string is used as <WWW::Sitemap::XML::Google::Video::Player/"loc">.
 
 =head1 AUTHOR
 
@@ -173,10 +364,9 @@ Alex J. G. Burzyński <ajgb@cpan.org>
 
 =head1 COPYRIGHT AND LICENSE
 
-This software is copyright (c) 2010 by Alex J. G. Burzyński <ajgb@cpan.org>.
+This software is copyright (c) 2014 by Alex J. G. Burzyński <ajgb@cpan.org>.
 
 This is free software; you can redistribute it and/or modify it under
 the same terms as the Perl 5 programming language system itself.
 
 =cut
-

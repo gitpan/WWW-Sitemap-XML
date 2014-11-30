@@ -1,14 +1,12 @@
+#ABSTRACT: Abstract interface for sitemap indexes' Sitemap classes
 use strict;
 use warnings;
 package WWW::SitemapIndex::XML::Sitemap::Interface;
 BEGIN {
   $WWW::SitemapIndex::XML::Sitemap::Interface::AUTHORITY = 'cpan:AJGB';
 }
-{
-  $WWW::SitemapIndex::XML::Sitemap::Interface::VERSION = '1.121160';
-}
+$WWW::SitemapIndex::XML::Sitemap::Interface::VERSION = '2.00';
 use Moose::Role;
-#ABSTRACT: Abstract interface for sitemap indexes' Sitemap classes
 
 requires qw(
     loc lastmod as_xml
@@ -19,11 +17,11 @@ no Moose::Role;
 
 1;
 
-
 __END__
+
 =pod
 
-=encoding utf-8
+=encoding UTF-8
 
 =head1 NAME
 
@@ -31,7 +29,7 @@ WWW::SitemapIndex::XML::Sitemap::Interface - Abstract interface for sitemap inde
 
 =head1 VERSION
 
-version 1.121160
+version 2.00
 
 =head1 SYNOPSIS
 
@@ -63,28 +61,15 @@ The date of last modification of the sitemap.
 
 XML representing the C<E<lt>sitemapE<gt>> entry in the sitemap index.
 
-=head1 SEE ALSO
-
-Please see those modules/websites for more information related to this module.
-
-=over 4
-
-=item *
-
-L<WWW::Sitemap::XML|WWW::Sitemap::XML>
-
-=back
-
 =head1 AUTHOR
 
 Alex J. G. Burzyński <ajgb@cpan.org>
 
 =head1 COPYRIGHT AND LICENSE
 
-This software is copyright (c) 2010 by Alex J. G. Burzyński <ajgb@cpan.org>.
+This software is copyright (c) 2014 by Alex J. G. Burzyński <ajgb@cpan.org>.
 
 This is free software; you can redistribute it and/or modify it under
 the same terms as the Perl 5 programming language system itself.
 
 =cut
-

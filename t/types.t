@@ -1,7 +1,7 @@
 use strict;
 use warnings;
 
-use Test::More tests => 38;
+use Test::More tests => 40;
 use Test::Exception;
 use Test::NoWarnings;
 use URI;
@@ -23,6 +23,16 @@ use URI;
     has [qw( loc lastmod changefreq priority as_xml )] => (
         is => 'rw',
         isa => 'Str',
+    );
+
+    has [qw( images videos )] => (
+        is => 'rw',
+        isa => 'ArrayRef',
+    );
+
+    has [qw( mobile )] => (
+        is => 'rw',
+        isa => 'Bool',
     );
 
     with 'WWW::Sitemap::XML::URL::Interface';
@@ -54,7 +64,7 @@ use URI;
 
     package Test::WWW::Sitemap::XML::Types;
     use Moose;
-    use WWW::Sitemap::XML::Types qw( SitemapURL SitemapIndexSitemap Location ChangeFreq Priority );
+    use WWW::Sitemap::XML::Types qw( SitemapURL SitemapIndexSitemap Location ChangeFreq Priority ArrayRefOfImageObjects ArrayRefOfVideoObjects );
 
     has 'sitemap' => (
         is => 'rw',
@@ -80,6 +90,16 @@ use URI;
     has 'priority' => (
         is => 'rw',
         isa => Priority,
+    );
+
+    has 'images' => (
+        is => 'rw',
+        isa => ArrayRefOfImageObjects,
+    );
+
+    has 'videos' => (
+        is => 'rw',
+        isa => ArrayRefOfVideoObjects,
     );
 
 }
@@ -146,9 +166,12 @@ for my $valid_changefreq ( qw( always hourly daily weekly monthly yearly never )
 }
 
 for my $invalid_cf ( qw( nightly fortnight ) ) {
-    throws_ok {
+    eval {
         $o->changefreq( $invalid_cf );
-    } qr/Invalid changefreq/, "$invalid_cf is not a valid ChangeFreq";
+    };
+    my $e = $@;
+    isa_ok($e, 'Moose::Exception');
+    is($e->attribute_name, 'changefreq', '...and exception thrown for changefreq');
 }
 
 for ( 0 .. 10 ) {

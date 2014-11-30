@@ -1,18 +1,17 @@
+#ABSTRACT: XML Sitemap url entry
 use strict;
 use warnings;
 package WWW::Sitemap::XML::URL;
 BEGIN {
   $WWW::Sitemap::XML::URL::AUTHORITY = 'cpan:AJGB';
 }
-{
-  $WWW::Sitemap::XML::URL::VERSION = '1.121160';
-}
-#ABSTRACT: XML Sitemap url entry
-
+$WWW::Sitemap::XML::URL::VERSION = '2.00';
 use Moose;
-use WWW::Sitemap::XML::Types qw( Location ChangeFreq Priority );
+use WWW::Sitemap::XML::Types qw( Location ChangeFreq Priority ArrayRefOfImageObjects ArrayRefOfVideoObjects );
 use MooseX::Types::DateTime::W3C qw( DateTimeW3C );
 use XML::LibXML;
+use WWW::Sitemap::XML::Google::Image;
+use WWW::Sitemap::XML::Google::Video;
 
 
 
@@ -38,6 +37,7 @@ has 'changefreq' => (
     is => 'rw',
     isa => ChangeFreq,
     required => 0,
+    coerce => 1,
     predicate => 'has_changefreq',
 );
 
@@ -47,6 +47,33 @@ has 'priority' => (
     isa => Priority,
     required => 0,
     predicate => 'has_priority',
+);
+
+
+has 'images' => (
+    is => 'rw',
+    isa => ArrayRefOfImageObjects,
+    required => 0,
+    coerce => 1,
+    predicate => 'has_images',
+);
+
+
+has 'videos' => (
+    is => 'rw',
+    isa => ArrayRefOfVideoObjects,
+    required => 0,
+    coerce => 1,
+    predicate => 'has_videos',
+);
+
+
+has 'mobile' => (
+    is => 'rw',
+    isa => 'Bool',
+    required => 0,
+    coerce => 0,
+    predicate => 'has_mobile',
 );
 
 
@@ -67,6 +94,22 @@ sub as_xml {
             eval('$self->has_'.$_) || defined $self->$_()
         } qw( lastmod changefreq priority );
 
+    if ( $self->has_images ) {
+        for my $image ( @{ $self->images || [] } ) {
+            $url->appendChild( $image->as_xml );
+        }
+    }
+
+    if ( $self->has_videos ) {
+        for my $video ( @{ $self->videos || [] } ) {
+            $url->appendChild( $video->as_xml );
+        }
+    }
+
+    if ( $self->has_mobile && $self->mobile ) {
+        my $e = XML::LibXML::Element->new('mobile:mobile');
+        $url->appendChild( $e );
+    }
 
     return $url;
 }
@@ -78,6 +121,7 @@ around BUILDARGS => sub {
     if ( @_ == 1 && ! ref $_[0] ) {
         return $class->$next(loc => $_[0]);
     }
+
     return $class->$next( @_ );
 };
 
@@ -88,11 +132,11 @@ __PACKAGE__->meta->make_immutable;
 
 1;
 
-
 __END__
+
 =pod
 
-=encoding utf-8
+=encoding UTF-8
 
 =head1 NAME
 
@@ -100,7 +144,7 @@ WWW::Sitemap::XML::URL - XML Sitemap url entry
 
 =head1 VERSION
 
-version 1.121160
+version 2.00
 
 =head1 SYNOPSIS
 
@@ -111,7 +155,7 @@ version 1.121160
         priority => 1.0,
     );
 
-XML sample:
+XML output:
 
     <?xml version="1.0" encoding="UTF-8"?>
     <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
@@ -120,6 +164,81 @@ XML sample:
           <lastmod>2010-11-26</lastmod>
           <changefreq>always</changefreq>
           <priority>1.0</priority>
+       </url>
+    </urlset>
+
+Google sitemap video and image extensions:
+
+    my $url2 = WWW::Sitemap::XML::URL->new(
+        loc => 'http://mywebsite.com/',
+        lastmod => '2010-11-26',
+        changefreq => 'always',
+        priority => 1.0,
+        mobile => 1,
+        images => [
+            {
+                loc => 'http://mywebsite.com/image1.jpg',
+                caption => Caption 1',
+                title => 'Title 1',
+                license => 'http://www.mozilla.org/MPL/2.0/',
+                geo_location => 'Town, Region',
+            },
+            {
+                loc => 'http://mywebsite.com/image2.jpg',
+                caption => Caption 2',
+                title => 'Title 2',
+                license => 'http://www.mozilla.org/MPL/2.0/',
+                geo_location => 'Town, Region',
+            }
+        ],
+        videos => [
+            content_loc => 'http://mywebsite.com/video1.flv',
+            player => {
+                loc => 'http://mywebsite.com/video_player.swf?video=1',
+                allow_embed => "yes",
+                autoplay => "ap=1",
+            }
+            thumbnail_loc => 'http://mywebsite.com/thumbs/1.jpg',
+            title => 'Video Title 1',
+            description => 'Video Description 1',
+        ]
+
+    );
+
+XML output:
+
+    <?xml version="1.0" encoding="UTF-8"?>
+    <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
+        xmlns:image="http://www.google.com/schemas/sitemap-image/1.1"
+        xmlns:video="http://www.google.com/schemas/sitemap-video/1.1">
+       <url>
+          <loc>http://mywebsite.com/</loc>
+          <lastmod>2010-11-26</lastmod>
+          <changefreq>always</changefreq>
+          <priority>1.0</priority>
+          <mobile:mobile/>
+          <image:image>
+             <image:loc>http://mywebsite.com/image1.jpg</image:loc>
+             <image:caption>Caption 1</image:caption>
+             <image:title>Title 1</image:title>
+             <image:license>http://www.mozilla.org/MPL/2.0/</image:license>
+             <image:geo_location>Town, Region</image:geo_location>
+          </image:image>
+          <image:image>
+             <image:loc>http://mywebsite.com/image2.jpg</image:loc>
+             <image:caption>Caption 2</image:caption>
+             <image:title>Title 2</image:title>
+             <image:license>http://www.mozilla.org/MPL/2.0/</image:license>
+             <image:geo_location>Town, Region</image:geo_location>
+          </image:image>
+          <video:video>
+             <video:content_loc>http://mywebsite.com/video1.flv</video:content_loc>
+             <video:title>Video Title 1</video:title>
+             <video:description>Video Description 1</video:description>
+             <video:thumbnail_loc>http://mywebsite.com/thumbs/1.jpg</video:thumbnail_loc>
+             <video:player_loc allow_embed="yes" autoplay="ap=1">http://mywebsite.com/video_player.swf?video=1</video:player_loc>
+          </video:video>
+
        </url>
     </urlset>
 
@@ -165,6 +284,40 @@ isa: L<WWW::Sitemap::XML::Types/"Priority">
 
 Optional.
 
+=head2 images
+
+Array reference of images on page.
+
+Note: This is a Google sitemap extension.
+
+isa: L<WWW::Sitemap::XML::Types/"ArrayRefOfImageObjects">
+
+Optional.
+
+=head2 videos
+
+Array reference of videos on page.
+
+Note: This is a Google sitemap extension.
+
+isa: L<WWW::Sitemap::XML::Types/"ArrayRefOfVideoObjects">
+
+Optional.
+
+=head2 mobile
+
+Flag indicating that page serves feature phone content.
+
+A mobile sitemap must contain only URLs that serve feature phone web content.
+All other URLs are ignored by the Google crawling mechanisms so, if you have
+non-featurephone content, create a separate sitemap for those URLs.
+
+Note: This is a Google sitemap extension.
+
+isa: I<Bool>
+
+Optional.
+
 =head1 METHODS
 
 =head2 as_xml
@@ -173,19 +326,7 @@ Returns L<XML::LibXML::Element> object representing the C<E<lt>urlE<gt>> entry i
 
 =head1 SEE ALSO
 
-Please see those modules/websites for more information related to this module.
-
-=over 4
-
-=item *
-
-L<WWW::Sitemap::XML|WWW::Sitemap::XML>
-
-=item *
-
 L<http://www.sitemaps.org/protocol.php>
-
-=back
 
 =head1 AUTHOR
 
@@ -193,10 +334,9 @@ Alex J. G. Burzyński <ajgb@cpan.org>
 
 =head1 COPYRIGHT AND LICENSE
 
-This software is copyright (c) 2010 by Alex J. G. Burzyński <ajgb@cpan.org>.
+This software is copyright (c) 2014 by Alex J. G. Burzyński <ajgb@cpan.org>.
 
 This is free software; you can redistribute it and/or modify it under
 the same terms as the Perl 5 programming language system itself.
 
 =cut
-

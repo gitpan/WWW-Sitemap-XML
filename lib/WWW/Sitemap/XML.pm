@@ -1,18 +1,15 @@
+#ABSTRACT: XML Sitemap protocol
 use strict;
 use warnings;
 package WWW::Sitemap::XML;
 BEGIN {
   $WWW::Sitemap::XML::AUTHORITY = 'cpan:AJGB';
 }
-{
-  $WWW::Sitemap::XML::VERSION = '1.121160';
-}
-#ABSTRACT: XML Sitemap protocol
-
+$WWW::Sitemap::XML::VERSION = '2.00';
 use Moose;
 
 use WWW::Sitemap::XML::URL;
-use XML::LibXML 1.70;
+use XML::LibXML qw(XML_ELEMENT_NODE);
 use Scalar::Util qw( blessed );
 
 use WWW::Sitemap::XML::Types qw( SitemapURL );
@@ -59,6 +56,9 @@ has '_root_ns' => (
                 'http://www.sitemaps.org/schemas/sitemap/0.9',
                 'http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd'
             ),
+            'xmlns:image' => "http://www.google.com/schemas/sitemap-image/1.1",
+            'xmlns:video' => "http://www.google.com/schemas/sitemap-video/1.1",
+            'xmlns:mobile' => "http://www.google.com/schemas/sitemap-mobile/1.0",
         }
     },
 );
@@ -66,6 +66,11 @@ has '_root_ns' => (
 has '_root_elem' => (
     is => 'ro',
     default => 'urlset',
+);
+
+has '_entry_elem' => (
+    is => 'ro',
+    default => 'url',
 );
 
 sub _pre_check_add {
@@ -125,12 +130,67 @@ sub read {
     my $class = $self->_entry_class;
 
     my $xml = XML::LibXML->load_xml( %args );
+    my $doc = $xml->getDocumentElement;
 
-    for my $url ( $xml->getDocumentElement->nonBlankChildNodes() ) {
+    my @ns = $doc->getNamespaces();
+    for my $ns ( @ns ) {
+        my $name = $ns->localname;
+        next unless $name;
+
+        $self->_root_ns->{ $ns->nodeName } = $ns->href;
+    }
+
+    for my $url ( $doc->getChildrenByLocalName( $self->_entry_elem ) ) {
+        my @childNodes = grep { $_->nodeType == XML_ELEMENT_NODE() } $url->nonBlankChildNodes;
+        my %args;
+        for my $n ( @childNodes ) {
+            my $localname = $n->localname;
+
+            if ( $localname eq 'image' ) {
+                push @{ $args{images} }, {
+                    map {
+                        $_->localname => $_->textContent
+                    }
+                    grep { $_->nodeType == XML_ELEMENT_NODE() }
+                    $n->nonBlankChildNodes
+                };
+            }
+            elsif ( $localname eq 'video' ) {
+                my $video = {};
+                my @videoChildNodes = grep { $_->nodeType == XML_ELEMENT_NODE() } $n->nonBlankChildNodes;
+
+                for my $cn ( @videoChildNodes ) {
+                    my $vname = $cn->localname;
+
+                    if ( $vname eq 'player_loc' ) {
+                        $video->{player} = {
+                            loc => $cn->textContent,
+                            (
+                                map {
+                                    $_ => $cn->getAttribute($_)
+                                }
+                                grep {
+                                    $cn->hasAttribute($_)
+                                } qw( allow_embed autoplay )
+                            )
+                        };
+                    }
+                    else {
+                        $video->{ $vname } = $cn->textContent;
+                    }
+                }
+
+                push @{ $args{videos} }, $video;
+            }
+            elsif ( $localname eq 'mobile' ) {
+                $args{mobile} = 1;
+            }
+            else {
+                $args{ $n->localname } = $n->textContent;
+            }
+        }
         push @entries,
-            $class->new(
-                map { $_->nodeName => $_->textContent } $url->nonBlankChildNodes
-            );
+            $class->new( %args );
     }
 
     return @entries;
@@ -182,11 +242,11 @@ __PACKAGE__->meta->make_immutable;
 
 1;
 
-
 __END__
+
 =pod
 
-=encoding utf-8
+=encoding UTF-8
 
 =head1 NAME
 
@@ -194,7 +254,7 @@ WWW::Sitemap::XML - XML Sitemap protocol
 
 =head1 VERSION
 
-version 1.121160
+version 2.00
 
 =head1 SYNOPSIS
 
@@ -211,6 +271,34 @@ version 1.121160
         lastmod => '2010-11-22',
         changefreq => 'monthly',
         priority => 1.0,
+        mobile => 1,
+        images => [
+            {
+                loc => 'http://mywebsite.com/image1.jpg',
+                caption => Caption 1',
+                title => 'Title 1',
+                license => 'http://www.mozilla.org/MPL/2.0/',
+                geo_location => 'Town, Region',
+            },
+            {
+                loc => 'http://mywebsite.com/image2.jpg',
+                caption => Caption 2',
+                title => 'Title 2',
+                license => 'http://www.mozilla.org/MPL/2.0/',
+                geo_location => 'Town, Region',
+            }
+        ],
+        videos => {
+            content_loc => 'http://mywebsite.com/video1.flv',
+            player => {
+                loc => 'http://mywebsite.com/video_player.swf?video=1',
+                allow_embed => "yes",
+                autoplay => "ap=1",
+            },
+            thumbnail_loc => 'http://mywebsite.com/thumbs/1.jpg',
+            title => 'Video Title 1',
+            description => 'Video Description 1',
+        }
     );
 
     # or
@@ -220,14 +308,50 @@ version 1.121160
             lastmod => '2010-11-22',
             changefreq => 'monthly',
             priority => 1.0,
+            mobile => 1,
+            images => [
+                WWW::Sitemap::XML::Google::Image->new(
+                    {
+                        loc => 'http://mywebsite.com/image1.jpg',
+                        caption => 'Caption 1',
+                        title => 'Title 1',
+                        license => 'http://www.mozilla.org/MPL/2.0/',
+                        geo_location => 'Town, Region',
+                    },
+                ),
+                WWW::Sitemap::XML::Google::Image->new(
+                    {
+                        loc => 'http://mywebsite.com/image2.jpg',
+                        caption => 'Caption 2',
+                        title => 'Title 2',
+                        license => 'http://www.mozilla.org/MPL/2.0/',
+                        geo_location => 'Town, Region',
+                    }
+                ),
+            ],
+            videos => [
+                WWW::Sitemap::XML::Google::Video->new(
+                    content_loc => 'http://mywebsite.com/video1.flv',
+                    player => WWW::Sitemap::XML::Google::Video::Player->new(
+                        {
+                            loc => 'http://mywebsite.com/video_player.swf?video=1',
+                            allow_embed => "yes",
+                            autoplay => "ap=1",
+                        }
+                    ),
+                    thumbnail_loc => 'http://mywebsite.com/thumbs/1.jpg',
+                    title => 'Video Title 1',
+                    description => 'Video Description 1',
+                ),
+            ],
         )
     );
 
     # read URLs from existing sitemap.xml file
-    my @urls = $map->read( 'sitemap.xml' );
+    my @urls = $map->read( location => 'sitemap.xml' );
 
     # load urls from existing sitemap.xml file
-    $map->load( 'sitemap.xml' );
+    $map->load( location => 'sitemap.xml' );
 
     # get XML::LibXML object
     my $xml = $map->as_xml;
@@ -242,7 +366,8 @@ version 1.121160
 
 =head1 DESCRIPTION
 
-Read and write sitemap XML files as defined at L<http://www.sitemaps.org/>.
+Read and write sitemap XML files as defined at L<http://www.sitemaps.org/> and
+with support of Google video and image extensions described at L<https://support.google.com/webmasters/answer/183668>.
 
 =head1 METHODS
 
@@ -361,23 +486,11 @@ added into sitemap.
 
 =head1 SEE ALSO
 
-Please see those modules/websites for more information related to this module.
-
-=over 4
-
-=item *
-
 L<WWW::SitemapIndex::XML>
-
-=item *
 
 L<http://www.sitemaps.org/>
 
-=item *
-
-L<Search::Sitemap>
-
-=back
+L<https://support.google.com/webmasters/answer/183668>
 
 =head1 AUTHOR
 
@@ -385,10 +498,9 @@ Alex J. G. Burzyński <ajgb@cpan.org>
 
 =head1 COPYRIGHT AND LICENSE
 
-This software is copyright (c) 2010 by Alex J. G. Burzyński <ajgb@cpan.org>.
+This software is copyright (c) 2014 by Alex J. G. Burzyński <ajgb@cpan.org>.
 
 This is free software; you can redistribute it and/or modify it under
 the same terms as the Perl 5 programming language system itself.
 
 =cut
-

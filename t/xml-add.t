@@ -34,6 +34,16 @@ lives_ok {
         isa => 'Str',
     );
 
+    has [qw( images videos )] => (
+        is => 'rw',
+        isa => 'ArrayRef',
+    );
+
+    has [qw( mobile )] => (
+        is => 'rw',
+        isa => 'Bool',
+    );
+
     with 'WWW::Sitemap::XML::URL::Interface';
 }
 

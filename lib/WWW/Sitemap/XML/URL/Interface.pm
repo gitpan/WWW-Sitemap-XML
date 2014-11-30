@@ -1,17 +1,15 @@
+#ABSTRACT: Abstract interface for sitemap's URL classes
 use strict;
 use warnings;
 package WWW::Sitemap::XML::URL::Interface;
 BEGIN {
   $WWW::Sitemap::XML::URL::Interface::AUTHORITY = 'cpan:AJGB';
 }
-{
-  $WWW::Sitemap::XML::URL::Interface::VERSION = '1.121160';
-}
+$WWW::Sitemap::XML::URL::Interface::VERSION = '2.00';
 use Moose::Role;
-#ABSTRACT: Abstract interface for sitemap's URL classes
 
 requires qw(
-    loc lastmod changefreq priority as_xml
+    loc lastmod changefreq priority images videos mobile as_xml
 );
 
 
@@ -19,11 +17,11 @@ no Moose::Role;
 
 1;
 
-
 __END__
+
 =pod
 
-=encoding utf-8
+=encoding UTF-8
 
 =head1 NAME
 
@@ -31,7 +29,7 @@ WWW::Sitemap::XML::URL::Interface - Abstract interface for sitemap's URL classes
 
 =head1 VERSION
 
-version 1.121160
+version 2.00
 
 =head1 SYNOPSIS
 
@@ -43,45 +41,23 @@ version 1.121160
         isa => 'Str',
     );
 
+    has [qw( images videos )] => (
+        is => 'rw',
+        isa => 'ArrayRef',
+    );
+
+    has [qw( mobile )] => (
+        is => 'rw',
+        isa => 'Bool',
+    );
+
     with 'WWW::Sitemap::XML::URL::Interface';
 
 =head1 DESCRIPTION
 
 Abstract interface for URL elements added to sitemap.
 
-=head1 ABSTRACT METHODS
-
-=head2 loc
-
-URL of the page.
-
-=head2 lastmod
-
-The date of last modification of the file.
-
-=head2 changefreq
-
-How frequently the page is likely to change.
-
-=head2 priority
-
-The priority of this URL relative to other URLs on your site.
-
-=head2 as_xml
-
-XML representing the C<E<lt>urlE<gt>> entry in the sitemap.
-
-=head1 SEE ALSO
-
-Please see those modules/websites for more information related to this module.
-
-=over 4
-
-=item *
-
-L<WWW::Sitemap::XML|WWW::Sitemap::XML>
-
-=back
+See L<WWW::Sitemap::XML::URL> for details.
 
 =head1 AUTHOR
 
@@ -89,10 +65,9 @@ Alex J. G. Burzyński <ajgb@cpan.org>
 
 =head1 COPYRIGHT AND LICENSE
 
-This software is copyright (c) 2010 by Alex J. G. Burzyński <ajgb@cpan.org>.
+This software is copyright (c) 2014 by Alex J. G. Burzyński <ajgb@cpan.org>.
 
 This is free software; you can redistribute it and/or modify it under
 the same terms as the Perl 5 programming language system itself.
 
 =cut
-

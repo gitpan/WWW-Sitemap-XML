@@ -1,14 +1,11 @@
+#ABSTRACT: XML Sitemap index sitemap entry
 use strict;
 use warnings;
 package WWW::SitemapIndex::XML::Sitemap;
 BEGIN {
   $WWW::SitemapIndex::XML::Sitemap::AUTHORITY = 'cpan:AJGB';
 }
-{
-  $WWW::SitemapIndex::XML::Sitemap::VERSION = '1.121160';
-}
-#ABSTRACT: XML Sitemap index sitemap entry
-
+$WWW::SitemapIndex::XML::Sitemap::VERSION = '2.00';
 use Moose;
 use WWW::Sitemap::XML::Types qw( Location );
 use MooseX::Types::DateTime::W3C qw( DateTimeW3C );
@@ -72,11 +69,11 @@ __PACKAGE__->meta->make_immutable;
 
 1;
 
-
 __END__
+
 =pod
 
-=encoding utf-8
+=encoding UTF-8
 
 =head1 NAME
 
@@ -84,7 +81,7 @@ WWW::SitemapIndex::XML::Sitemap - XML Sitemap index sitemap entry
 
 =head1 VERSION
 
-version 1.121160
+version 2.00
 
 =head1 SYNOPSIS
 
@@ -139,19 +136,7 @@ entry in the sitemap.
 
 =head1 SEE ALSO
 
-Please see those modules/websites for more information related to this module.
-
-=over 4
-
-=item *
-
-L<WWW::Sitemap::XML|WWW::Sitemap::XML>
-
-=item *
-
 L<http://www.sitemaps.org/protocol.php>
-
-=back
 
 =head1 AUTHOR
 
@@ -159,10 +144,9 @@ Alex J. G. Burzyński <ajgb@cpan.org>
 
 =head1 COPYRIGHT AND LICENSE
 
-This software is copyright (c) 2010 by Alex J. G. Burzyński <ajgb@cpan.org>.
+This software is copyright (c) 2014 by Alex J. G. Burzyński <ajgb@cpan.org>.
 
 This is free software; you can redistribute it and/or modify it under
 the same terms as the Perl 5 programming language system itself.
 
 =cut
-

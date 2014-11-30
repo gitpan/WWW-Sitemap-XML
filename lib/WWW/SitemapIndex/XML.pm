@@ -1,19 +1,16 @@
+#ABSTRACT: XML Sitemap index protocol
 use strict;
 use warnings;
 package WWW::SitemapIndex::XML;
 BEGIN {
   $WWW::SitemapIndex::XML::AUTHORITY = 'cpan:AJGB';
 }
-{
-  $WWW::SitemapIndex::XML::VERSION = '1.121160';
-}
-#ABSTRACT: XML Sitemap index protocol
-
+$WWW::SitemapIndex::XML::VERSION = '2.00';
 use Moose;
 extends qw( WWW::Sitemap::XML );
 
 use WWW::SitemapIndex::XML::Sitemap;
-use XML::LibXML 1.70;
+use XML::LibXML;
 use Scalar::Util qw( blessed );
 
 use WWW::Sitemap::XML::Types qw( SitemapIndexSitemap );
@@ -53,6 +50,11 @@ has '+_root_elem' => (
     default => 'sitemapindex',
 );
 
+has '+_entry_elem' => (
+    is => 'ro',
+    default => 'sitemap',
+);
+
 
 sub sitemaps { shift->_entries }
 
@@ -61,11 +63,11 @@ __PACKAGE__->meta->make_immutable;
 
 1;
 
-
 __END__
+
 =pod
 
-=encoding utf-8
+=encoding UTF-8
 
 =head1 NAME
 
@@ -73,7 +75,7 @@ WWW::SitemapIndex::XML - XML Sitemap index protocol
 
 =head1 VERSION
 
-version 1.121160
+version 2.00
 
 =head1 SYNOPSIS
 
@@ -234,19 +236,7 @@ objects added into sitemap index.
 
 =head1 SEE ALSO
 
-Please see those modules/websites for more information related to this module.
-
-=over 4
-
-=item *
-
-L<WWW::Sitemap::XML|WWW::Sitemap::XML>
-
-=item *
-
 L<http://www.sitemaps.org/>
-
-=back
 
 =head1 AUTHOR
 
@@ -254,10 +244,9 @@ Alex J. G. Burzyński <ajgb@cpan.org>
 
 =head1 COPYRIGHT AND LICENSE
 
-This software is copyright (c) 2010 by Alex J. G. Burzyński <ajgb@cpan.org>.
+This software is copyright (c) 2014 by Alex J. G. Burzyński <ajgb@cpan.org>.
 
 This is free software; you can redistribute it and/or modify it under
 the same terms as the Perl 5 programming language system itself.
 
 =cut
-
