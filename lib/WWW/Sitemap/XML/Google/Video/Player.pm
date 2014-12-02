@@ -5,7 +5,7 @@ package WWW::Sitemap::XML::Google::Video::Player;
 BEGIN {
   $WWW::Sitemap::XML::Google::Video::Player::AUTHORITY = 'cpan:AJGB';
 }
-$WWW::Sitemap::XML::Google::Video::Player::VERSION = '2.01';
+$WWW::Sitemap::XML::Google::Video::Player::VERSION = '2.02';
 use Moose;
 use WWW::Sitemap::XML::Types qw( Location StrBool );
 
@@ -85,7 +85,7 @@ WWW::Sitemap::XML::Google::Video::Player - XML Sitemap Google extension video pl
 
 =head1 VERSION
 
-version 2.01
+version 2.02
 
 =head1 SYNOPSIS
 

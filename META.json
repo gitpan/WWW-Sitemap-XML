@@ -75,7 +75,7 @@
          "web" : "https://github.com/ajgb/www-sitemap-xml"
       }
    },
-   "version" : "2.01",
+   "version" : "2.02",
    "x_Dist_Zilla" : {
       "perl" : {
          "version" : "5.018002"

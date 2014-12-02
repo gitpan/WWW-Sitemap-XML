@@ -5,7 +5,7 @@ package WWW::Sitemap::XML::URL::Interface;
 BEGIN {
   $WWW::Sitemap::XML::URL::Interface::AUTHORITY = 'cpan:AJGB';
 }
-$WWW::Sitemap::XML::URL::Interface::VERSION = '2.01';
+$WWW::Sitemap::XML::URL::Interface::VERSION = '2.02';
 use Moose::Role;
 
 requires qw(
@@ -29,7 +29,7 @@ WWW::Sitemap::XML::URL::Interface - Abstract interface for sitemap's URL classes
 
 =head1 VERSION
 
-version 2.01
+version 2.02
 
 =head1 SYNOPSIS
 

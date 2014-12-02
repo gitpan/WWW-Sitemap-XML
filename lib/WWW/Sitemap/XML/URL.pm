@@ -5,7 +5,7 @@ package WWW::Sitemap::XML::URL;
 BEGIN {
   $WWW::Sitemap::XML::URL::AUTHORITY = 'cpan:AJGB';
 }
-$WWW::Sitemap::XML::URL::VERSION = '2.01';
+$WWW::Sitemap::XML::URL::VERSION = '2.02';
 use Moose;
 use WWW::Sitemap::XML::Types qw( Location ChangeFreq Priority ArrayRefOfImageObjects ArrayRefOfVideoObjects );
 use MooseX::Types::DateTime::W3C qw( DateTimeW3C );
@@ -144,7 +144,7 @@ WWW::Sitemap::XML::URL - XML Sitemap url entry
 
 =head1 VERSION
 
-version 2.01
+version 2.02
 
 =head1 SYNOPSIS
 

@@ -5,7 +5,7 @@ package WWW::Sitemap::XML::Types;
 BEGIN {
   $WWW::Sitemap::XML::Types::AUTHORITY = 'cpan:AJGB';
 }
-$WWW::Sitemap::XML::Types::VERSION = '2.01';
+$WWW::Sitemap::XML::Types::VERSION = '2.02';
 use MooseX::Types -declare => [qw(
     SitemapURL
     SitemapIndexSitemap
@@ -182,7 +182,7 @@ WWW::Sitemap::XML::Types - Type constraints used by WWW::Sitemap::XML and WWW::S
 
 =head1 VERSION
 
-version 2.01
+version 2.02
 
 =head1 DESCRIPTION
 

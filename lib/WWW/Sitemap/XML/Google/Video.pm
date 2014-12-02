@@ -5,7 +5,7 @@ package WWW::Sitemap::XML::Google::Video;
 BEGIN {
   $WWW::Sitemap::XML::Google::Video::AUTHORITY = 'cpan:AJGB';
 }
-$WWW::Sitemap::XML::Google::Video::VERSION = '2.01';
+$WWW::Sitemap::XML::Google::Video::VERSION = '2.02';
 use Moose;
 use WWW::Sitemap::XML::Types qw( Location VideoPlayer Max100CharsStr Max2048CharsStr );
 use XML::LibXML;
@@ -82,7 +82,7 @@ around BUILDARGS => sub {
     my $class = shift;
 
     if ( @_ == 1 && ! ref $_[0] ) {
-        return $class->$next(loc => $_[0]);
+        return $class->$next(content_loc => $_[0]);
     }
 
     return $class->$next( @_ );
@@ -107,7 +107,7 @@ WWW::Sitemap::XML::Google::Video - XML Sitemap Google extension video entry
 
 =head1 VERSION
 
-version 2.01
+version 2.02
 
 =head1 SYNOPSIS
 

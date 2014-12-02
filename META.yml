@@ -40,7 +40,7 @@ resources:
   bugtracker: https://rt.cpan.org/Public/Dist/Display.html?Name=WWW-Sitemap-XML
   homepage: http://search.cpan.org/dist/WWW-Sitemap-XML
   repository: git://github.com/ajgb/www-sitemap-xml.git
-version: '2.01'
+version: '2.02'
 x_Dist_Zilla:
   perl:
     version: '5.018002'

@@ -5,7 +5,7 @@ package WWW::SitemapIndex::XML::Sitemap;
 BEGIN {
   $WWW::SitemapIndex::XML::Sitemap::AUTHORITY = 'cpan:AJGB';
 }
-$WWW::SitemapIndex::XML::Sitemap::VERSION = '2.01';
+$WWW::SitemapIndex::XML::Sitemap::VERSION = '2.02';
 use Moose;
 use WWW::Sitemap::XML::Types qw( Location );
 use MooseX::Types::DateTime::W3C qw( DateTimeW3C );
@@ -81,7 +81,7 @@ WWW::SitemapIndex::XML::Sitemap - XML Sitemap index sitemap entry
 
 =head1 VERSION
 
-version 2.01
+version 2.02
 
 =head1 SYNOPSIS
 

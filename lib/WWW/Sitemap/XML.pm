@@ -5,7 +5,7 @@ package WWW::Sitemap::XML;
 BEGIN {
   $WWW::Sitemap::XML::AUTHORITY = 'cpan:AJGB';
 }
-$WWW::Sitemap::XML::VERSION = '2.01';
+$WWW::Sitemap::XML::VERSION = '2.02';
 use Moose;
 
 use WWW::Sitemap::XML::URL;
@@ -254,7 +254,7 @@ WWW::Sitemap::XML - XML Sitemap protocol
 
 =head1 VERSION
 
-version 2.01
+version 2.02
 
 =head1 SYNOPSIS
 
